@@ -14,9 +14,9 @@ router.get('/all-repos', async (req: Request, res: Response) => {
   const reducedJson = [];
   json.forEach((repo: any) => {
     let newObj: any = {};
-    newObj.url = repo.name;
+    newObj.url = repo.html_url;
     newObj.description = repo.description;
-    newObj.name = repo.html_url;
+    newObj.name = repo.name;
     reducedJson.push(newObj);
   });
   res.send(reducedJson);
