@@ -15,6 +15,10 @@ app.use('/', (req, res) => {
   res.send('<h1>Welcome to my API back-end</h1>');
 });
 
+app.use('/api', (req, res) => {
+  res.send('<h1>/API</h1>');
+});
+
 // app.get('/api', apiController.getApi);
 
 export default app;
