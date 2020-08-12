@@ -41,6 +41,7 @@
     "express": "^4.17.1",
     "node-fetch": "^2.6.0",
     "nodemon": "^2.0.4",
+    "ts-mailgun": "^0.4.2",
     "ts-node": "^8.10.2",
     "tslib": "~2.0.0",
     "typescript": "~3.9.7"
