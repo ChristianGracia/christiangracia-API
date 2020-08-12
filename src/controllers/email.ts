@@ -14,7 +14,7 @@ mailer.init();
 
 dotenv.config();
 
-router.get("/send-email", (req: Request, res: Response) => {
+router.post("/send-email", (req: Request, res: Response) => {
   const name = req.body.name;
   const email = req.body.email;
   const message = req.body.message;
@@ -23,7 +23,12 @@ router.get("/send-email", (req: Request, res: Response) => {
 
   mailer
     .send("christianmgracia@gmail.com", emailTitle, `<h1>${message}</h1>`)
-    .then((result) => res.send({}))
+    .then((result) =>
+      res.send({
+        name: name,
+        email: email,
+      })
+    )
     .catch((error) => res.send(null));
   // });
 });
