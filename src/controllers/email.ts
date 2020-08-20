@@ -41,12 +41,11 @@ router.post("/site-visit", (req: Request, res: Response) => {
   const zip = body.zip;
   const query = body.query;
   const region = body.region;
-  const regionName = body.regionName;
 
   const message = `
   <h1>Data</h1>
   <h1> ${city} </h1>
-  <h1> ${regionName}, ${region} ${zip} </h1>
+  <h1> ${region} ${zip} </h1>
   <h1> ${country} </h1>
   <h1>ip: ${query} </h1>
   `;
