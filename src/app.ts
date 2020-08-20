@@ -46,8 +46,28 @@ app.set("port", process.env.PORT || 3000);
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
+const homePage = `
+<div style="background-color: black; height: 100%; margin: 0;">
+  <h1 style="color: green;">Welcome to my API</h1>
+  <h2 style="color: green;">
+    This API serves <a style="color: white;" href="https://christiangracia.com">
+      christiangracia.com
+    </a>
+  </h2>
+  <h2 style="color: green; font-weight: bold;">
+    Routes
+  </h2>
+  <h3 style="color: white;">/github</h3>
+  <h3 style="color: white;">/email</h3>
+
+  <p style="color: green;">
+    created by christian gracia
+  </p>
+</div>;
+`;
+
 router.get("/", (req: Request, res: Response) => {
-  res.send("<h1>Welcome to my API back-end</h1>");
+  res.send(homePage);
 });
 
 const githubController = require("./controllers/github");
