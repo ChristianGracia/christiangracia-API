@@ -9,7 +9,7 @@ const mailer = new NodeMailgun();
 mailer.apiKey = process.env.MAILGUN_API_KEY;
 mailer.domain = process.env.MAILGUN_DOMAIN;
 mailer.fromEmail = "noreply@christiangracia.com";
-mailer.fromTitle = "New email from christiangracia.com";
+mailer.fromTitle = "christiangracia.com";
 mailer.init();
 
 dotenv.config();
@@ -19,7 +19,7 @@ router.post("/send-email", (req: Request, res: Response) => {
   const email = req.body.email;
   const message = req.body.message;
 
-  const emailTitle = `${name}: ${email} | christiangracia.com`;
+  const emailTitle = `Email from ${name}: ${email}`;
 
   mailer
     .send("christianmgracia@gmail.com", emailTitle, `<h1>${message}</h1>`)
