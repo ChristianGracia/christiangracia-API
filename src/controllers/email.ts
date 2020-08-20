@@ -34,10 +34,27 @@ router.post("/send-email", (req: Request, res: Response) => {
 
 router.post("/site-visit", (req: Request, res: Response) => {
   const emailTitle = `New visitor on christiangracia.com`;
-  const message = "nice";
+
+  const body = req.body;
+
+  const city = body.city;
+  const country = body.country;
+
+  const zip = body.zip;
+  const query = body.query;
+  const region = body.region;
+  const regionName = body.regionName;
+
+  const message = `
+  <h1>Data</h1>
+  <h1> ${city} </h1>
+  <h1>ip: ${regionName}, ${region} ${zip} </h1>
+  <h1>ip: ${country} </h1>
+  <h1>ip: ${query} </h1>
+  `;
 
   mailer
-    .send("christianmgracia@gmail.com", emailTitle, `<h1>${message}</h1>`)
+    .send("christianmgracia@gmail.com", emailTitle, `${message}`)
     .then((result) => res.send({}))
     .catch((error) => res.send(null));
 });
