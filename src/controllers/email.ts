@@ -33,4 +33,15 @@ router.post("/send-email", (req: Request, res: Response) => {
   // });
 });
 
+router.post("/site-visit", (req: Request, res: Response) => {
+  const emailTitle = `New visitor on christiangracia.com`;
+  const message = "nice";
+
+  mailer
+    .send("christianmgracia@gmail.com", emailTitle, `<h1>${message}</h1>`)
+    .then((result) => res.send({}))
+    .catch((error) => res.send(null));
+  // });
+});
+
 module.exports = router;
