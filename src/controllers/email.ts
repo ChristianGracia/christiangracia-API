@@ -30,7 +30,6 @@ router.post("/send-email", (req: Request, res: Response) => {
       })
     )
     .catch((error) => res.send(null));
-  // });
 });
 
 router.post("/site-visit", (req: Request, res: Response) => {
@@ -41,7 +40,6 @@ router.post("/site-visit", (req: Request, res: Response) => {
     .send("christianmgracia@gmail.com", emailTitle, `<h1>${message}</h1>`)
     .then((result) => res.send({}))
     .catch((error) => res.send(null));
-  // });
 });
 
 module.exports = router;
