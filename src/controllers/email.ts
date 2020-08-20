@@ -33,8 +33,6 @@ router.post("/send-email", (req: Request, res: Response) => {
 });
 
 router.post("/site-visit", (req: Request, res: Response) => {
-  const emailTitle = `New visitor on christiangracia.com`;
-
   const body = req.body;
 
   const city = body.city;
@@ -52,6 +50,7 @@ router.post("/site-visit", (req: Request, res: Response) => {
   <h1> ${country} </h1>
   <h1>ip: ${query} </h1>
   `;
+  const emailTitle = `New visitor from ${city}, ${region}, ${zip}`;
 
   mailer
     .send("christianmgracia@gmail.com", emailTitle, `${message}`)
