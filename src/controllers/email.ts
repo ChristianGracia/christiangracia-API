@@ -48,8 +48,8 @@ router.post("/site-visit", (req: Request, res: Response) => {
   const message = `
   <h1>Data</h1>
   <h1> ${city} </h1>
-  <h1>ip: ${regionName}, ${region} ${zip} </h1>
-  <h1>ip: ${country} </h1>
+  <h1> ${regionName}, ${region} ${zip} </h1>
+  <h1> ${country} </h1>
   <h1>ip: ${query} </h1>
   `;
 
