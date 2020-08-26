@@ -17,6 +17,9 @@ router.get('/all-repos', async (req: Request, res: Response) => {
     newObj.url = repo.html_url;
     newObj.description = repo.description;
     newObj.name = repo.name;
+    newObj.language = repo.language;
+    newObj.updatedAt = repo.updated_at;
+
     reducedJson.push(newObj);
   });
   res.send(reducedJson);
