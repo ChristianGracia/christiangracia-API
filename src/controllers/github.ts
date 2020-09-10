@@ -29,9 +29,9 @@ router.get('/repo-all-commits', async (req: Request, res: Response) => {
   const clientId: string = process.env.gitId;
   const clientSecret: string = process.env.gitSecret;
 
-  const repoName = req.body.repoName;
+  const repoName = req.query.repoName;
 
-  const amount = req.body.numberOfCommits;
+  const amount = req.query.numberOfCommits;
 
   const URL = `https://api.github.com/repos/christiangracia/${repoName}/commits?per_page=${amount}&client_id=${clientId}&client_secret=${clientSecret}`;
 
