@@ -30,4 +30,5 @@ build/
 
 .env
 
-sql-scripts/current_projects.sql
+sql-scripts/cp1.sql
+sql-scripts/cu1.sql
