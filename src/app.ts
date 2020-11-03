@@ -78,4 +78,7 @@ app.use('/github', githubController);
 const emailController = require('./controllers/email');
 app.use('/email', emailController);
 
+const loginController = require('./controllers/login');
+app.use('/login', loginController);
+
 export default app;
