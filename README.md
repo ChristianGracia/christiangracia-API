@@ -9,3 +9,5 @@ my API does...
 **Server side render images**
 
 **Retrieval of my github repos using github API and formatting**
+
+**PostgreSQL DB**
