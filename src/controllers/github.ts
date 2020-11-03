@@ -22,7 +22,11 @@ router.get('/all-repos', async (req: Request, res: Response) => {
 
     reducedJson.push(newObj);
   });
-  res.send(reducedJson);
+  res.send(
+    reducedJson.sort(function (a, b) {
+      return a.updatedAt > b.updatedAt ? -1 : a.updatedAt < b.updatedAt ? 1 : 0;
+    }),
+  );
 });
 
 router.get('/repo-all-commits', async (req: Request, res: Response) => {
