@@ -48,24 +48,61 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 app.use('/static', express.static(path.join(__dirname, 'public')));
 
+//will move this later
 const homePage = `
-<div style="background-color: black; height: 100%; margin: 0;">
-  <h1 style="color: green;">Welcome to my API</h1>
-  <h2 style="color: green;">
-    This API serves <a style="color: white;" href="https://christiangracia.com">
-      christiangracia.com
-    </a>
-  </h2>
-  <h2 style="color: green; font-weight: bold;">
-    Routes
-  </h2>
-  <h3 style="color: white;">/github</h3>
-  <h3 style="color: white;">/email</h3>
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Christian Gracia API Homepage</title>
 
-  <p style="color: green;">
-    created by christian gracia
-  </p>
-</div>;
+    <style type="text/css">
+      body {
+        margin: 0;
+        padding: 0;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div
+      style="
+        display: flex;
+        flex-direction: column;
+        text-align: center;
+        justify-content: center;
+      "
+    >
+      <div style="margin-top: 60px;">
+        <h1 style="color: #d4af37;">Welcome to my API</h1>
+      </div>
+      <div style="margin-top: 12px;">
+        <h2 style="color: #d4af37;">
+          This API serves
+          <a style="" href="https://christiangracia.com">
+            christiangracia.com
+          </a>
+        </h2>
+      </div>
+
+      <h3 style="font-weight: bold;">
+        Public Routes
+      </h3>
+
+      <div style="margin-top: 20px; margin-bottom: 20px;">
+        <a>/github/all-repos</a>
+      </div>
+
+      <div style="margin-top: 20px;">
+        <p style="color: #d4af37;">
+          created by christian gracia
+        </p>
+      </div>
+    </div>
+  </body>
+</html>
+
 `;
 
 router.get('/', (req: Request, res: Response) => {
