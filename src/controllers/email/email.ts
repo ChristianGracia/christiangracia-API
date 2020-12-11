@@ -58,7 +58,7 @@ router.post('/site-visit', (req: Request, res: Response) => {
 });
 
 router.get('/', (req: Request, res: Response) => {
-  let reqPath = path.join(__dirname, '/email.html');
+  let reqPath = path.join(__dirname, '../../views/email.html');
   console.log(reqPath);
   res.sendFile(path.join(reqPath));
 });
