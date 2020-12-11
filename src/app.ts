@@ -52,13 +52,13 @@ router.get('/', (req: Request, res: Response) => {
   res.sendFile(path.join(__dirname + '/views/home.html'));
 });
 
-const githubController = require('./controllers/github');
+const githubController = require('./controllers/github/github');
 app.use('/github', githubController);
 
-const emailController = require('./controllers/email');
+const emailController = require('./controllers/email/email');
 app.use('/email', emailController);
 
-const loginController = require('./controllers/login');
+const loginController = require('./controllers/login/login');
 app.use('/login', loginController);
 
 export default app;

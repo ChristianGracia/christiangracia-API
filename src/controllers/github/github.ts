@@ -1,6 +1,7 @@
 import express, { Request, Response } from 'express';
 const router = express.Router();
 import returnExternalGet from '../services/fetch-service';
+import * as path from 'path';
 import * as dotenv from 'dotenv';
 
 dotenv.config();
@@ -51,6 +52,12 @@ router.get('/repo-all-commits', async (req: Request, res: Response) => {
     reducedJson.push(newObj);
   });
   res.send(reducedJson);
+});
+
+router.get('/', (req: Request, res: Response) => {
+  let reqPath = path.join(__dirname, '../views/github.html');
+  console.log(reqPath);
+  res.sendFile(path.join(reqPath));
 });
 
 module.exports = router;
