@@ -32,6 +32,25 @@ router.post('/send-email', (req: Request, res: Response) => {
     .catch((error) => res.send(null));
 });
 
+router.post('/send-email-nfl', (req: Request, res: Response) => {
+  const name = req.body.name;
+  const phone = req.body.phone;
+  const message = req.body.message;
+
+  const emailTitle = `Email from ${name}: ${phone}`;
+
+  mailer
+    .send('naturesfrontierlandscaping@gmail.com', emailTitle, `<h1>${message}</h1>`)
+    .then((result) =>
+      res.send({
+        name: name,
+        phone: phone,
+        message: message
+      }),
+    )
+    .catch((error) => res.send(null));
+});
+
 router.post('/site-visit', (req: Request, res: Response) => {
   const body = req.body;
 
