@@ -40,8 +40,7 @@ router.post('/send-email-nfl', (req: Request, res: Response) => {
   const emailTitle = `Email from ${name}: ${phone}`;
 
   mailer
-    // .send('naturesfrontierlandscaping@gmail.com', emailTitle, `<h1>${message}</h1>`)
-    .send('christianmgracia@gmail.com', emailTitle, `<h1>${message}</h1>`)
+    .send('naturesfrontierlandscaping@gmail.com', emailTitle, `<h1>${message}</h1>`)
     .then((result) => {
         console.log("sent");
         res.status(204).send({});
