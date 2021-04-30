@@ -39,6 +39,8 @@ router.post('/send-email-nfl', (req: Request, res: Response) => {
 
   const emailTitle = `Email from ${name}: ${phone}`;
 
+  console.log(req.body);
+
   mailer
     .send(process.env.NFL_EMAIL, emailTitle, `<h1>${message}</h1>`)
     .then((result) => {
