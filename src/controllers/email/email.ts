@@ -5,23 +5,32 @@ import * as dotenv from 'dotenv';
 
 import { NodeMailgun } from 'ts-mailgun';
 
-const mailer = new NodeMailgun();
-mailer.apiKey = process.env.MAILGUN_API_KEY;
-mailer.domain = process.env.MAILGUN_DOMAIN;
-mailer.fromEmail = 'noreply@christiangracia.com';
-mailer.fromTitle = 'christiangracia.com';
-mailer.init();
-
 dotenv.config();
 
+const cgMailer = new NodeMailgun();
+cgMailer.apiKey = process.env.MAILGUN_API_KEY;
+cgMailer.domain = process.env.MAILGUN_DOMAIN;
+
+cgMailer.fromEmail = 'noreply@christiangracia.com';
+cgMailer.fromTitle = 'christiangracia.com';
+cgMailer.init();
+
+const nflMailer = new NodeMailgun();
+nflMailer.apiKey = process.env.MAILGUN_API_KEY;
+nflMailer.domain = process.env.MAILGUN_DOMAIN;
+
+nflMailer.fromEmail = 'noreply@nflandscaping.com';
+nflMailer.fromTitle = 'nflandscaping.com';
+
+
+
 router.post('/send-email', (req: Request, res: Response) => {
-  const name = req.body.name;
-  const email = req.body.email;
-  const message = req.body.message;
+
+  const { name, email, message } = req.body
 
   const emailTitle = `Email from ${name}: ${email}`;
 
-  mailer
+  nflMailer
     .send('christianmgracia@gmail.com', emailTitle, `<h1>${message}</h1>`)
     .then((result) =>
       res.send({
@@ -33,15 +42,14 @@ router.post('/send-email', (req: Request, res: Response) => {
 });
 
 router.post('/send-email-nfl', (req: Request, res: Response) => {
-  const name = req.body.name;
-  const phone = req.body.phone;
-  const message = req.body.message;
+
+  const { name, phone, message } = req.body
 
   const emailTitle = `Email from ${name}: ${phone}`;
 
   console.log(req.body);
 
-  mailer
+  nflMailer
     .send(process.env.NFL_EMAIL, emailTitle, `<h1>${message}</h1>`)
     .then((result) => {
         console.log("sent");
@@ -52,14 +60,8 @@ router.post('/send-email-nfl', (req: Request, res: Response) => {
 });
 
 router.post('/site-visit', (req: Request, res: Response) => {
-  const body = req.body;
 
-  const city = body.city;
-  const country = body.country;
-
-  const zip = body.zip;
-  const query = body.query;
-  const region = body.region;
+  const { zip, query, region, city, country } = req.body
 
   const message = `
   <h1>Data</h1>
@@ -70,7 +72,7 @@ router.post('/site-visit', (req: Request, res: Response) => {
   `;
   const emailTitle = `New visitor from ${city}, ${region}, ${zip}`;
 
-  mailer
+  cgMailer
     .send('christianmgracia@gmail.com', emailTitle, `${message}`)
     .then((result) => res.send({}))
     .catch((error) => res.send(null));
