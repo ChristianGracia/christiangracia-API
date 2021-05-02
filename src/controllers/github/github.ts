@@ -43,7 +43,7 @@ router.get('/repo-all-commits', async (req: Request, res: Response) => {
   const json = await returnExternalGet(URL);
   const reducedJson = [];
   json.forEach((commit: any) => {
-    let newObj: any = {};
+    const newObj: any = {};
 
     newObj.time = commit.commit.author.date;
     newObj.message = commit.commit.message;
