@@ -12,17 +12,17 @@ router.get('/all-repos', async (req: Request, res: Response) => {
   const URL = `https://api.github.com/users/ChristianGracia/repos?per_page=20&sort=createdasc&client_id=${clientId}&client_secret=${clientSecret}`;
 
   const json = await returnExternalGet(URL);
-  const reducedJson = [];
-  json.forEach((repo: any) => {
-    let newObj: any = {};
-    newObj.url = repo.html_url;
-    newObj.description = repo.description;
-    newObj.name = repo.name;
-    newObj.language = repo.language;
-    newObj.updatedAt = repo.updated_at;
 
-    reducedJson.push(newObj);
+  const reducedJson = json.map((repo: any) => {
+    return {
+      url: repo.html_url,
+      description: repo.description,
+      name: repo.name,
+      language: repo.language,
+      updatedAt: repo.updated_at,
+    };
   });
+
   res.send(
     reducedJson.sort(function (a, b) {
       return a.updatedAt > b.updatedAt ? -1 : a.updatedAt < b.updatedAt ? 1 : 0;
