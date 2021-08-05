@@ -7,8 +7,7 @@ import * as dotenv from 'dotenv';
 dotenv.config();
 
 router.get('/all-repos', async (req: Request, res: Response) => {
-  const clientId: string = process.env.gitId;
-  const clientSecret: string = process.env.gitSecret;
+  const { clientId, clientSecret } = process.env;
   const URL = `https://api.github.com/users/ChristianGracia/repos?per_page=20&sort=createdasc&client_id=${clientId}&client_secret=${clientSecret}`;
 
   const json = await returnExternalGet(URL);
