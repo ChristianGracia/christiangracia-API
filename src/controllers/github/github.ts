@@ -2,9 +2,6 @@ import express, { Request, Response } from 'express';
 const router = express.Router();
 import returnExternalGet from '../../services/fetch-service';
 import * as path from 'path';
-import * as dotenv from 'dotenv';
-
-dotenv.config();
 
 router.get('/all-repos', async (req: Request, res: Response) => {
   const { clientId, clientSecret } = process.env;
@@ -22,11 +19,7 @@ router.get('/all-repos', async (req: Request, res: Response) => {
     };
   });
 
-  res.send(
-    reducedJson.sort(function (a, b) {
-      return a.updatedAt > b.updatedAt ? -1 : a.updatedAt < b.updatedAt ? 1 : 0;
-    }),
-  );
+  res.send(reducedJson);
 });
 
 router.get('/repo-all-commits', async (req: Request, res: Response) => {

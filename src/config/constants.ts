@@ -1,0 +1,22 @@
+module.exports = {
+  SPOTIFY_REQUEST_SCOPE: {
+    'ugc-image-upload': false,
+    'user-read-recently-played': false,
+    'user-top-read': false,
+    'user-read-playback-position': false,
+    'user-read-playback-state': false,
+    'user-modify-playback-state': false,
+    'user-read-currently-playing': false,
+    'app-remote-control': false,
+    'playlist-modify-public': false,
+    'playlist-modify-private': false,
+    'playlist-read-private': false,
+    'playlist-read-collaborative': false,
+    'user-follow-modify': false,
+    'user-follow-read': false,
+    'user-library-modify': false,
+    'user-library-read': false,
+    'user-read-email': false,
+    'user-read-private': false,
+  },
+};

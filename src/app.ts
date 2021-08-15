@@ -61,4 +61,7 @@ app.use('/email', emailController);
 const loginController = require('./controllers/login/login');
 app.use('/login', loginController);
 
+const spotifyController = require('./controllers/spotify/spotify');
+app.use('/spotify', spotifyController);
+
 export default app;

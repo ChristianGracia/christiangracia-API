@@ -1,11 +1,8 @@
 import express, { Request, Response } from 'express';
 const router = express.Router();
 import * as path from 'path';
-import * as dotenv from 'dotenv';
 
 import { NodeMailgun } from 'ts-mailgun';
-
-dotenv.config();
 
 const cgMailer = new NodeMailgun();
 cgMailer.apiKey = process.env.MAILGUN_API_KEY;
@@ -23,15 +20,12 @@ nflMailer.fromEmail = 'noreply@nflandscaping.com';
 nflMailer.fromTitle = 'nflandscaping.com';
 nflMailer.init();
 
-
 router.post('/send-email', (req: Request, res: Response) => {
-
-  const { name, email, message } = req.body
+  const { name, email, message } = req.body;
 
   const emailTitle = `Email from ${name}: ${email}`;
 
-  const emailBody =
-  `
+  const emailBody = `
   <!doctype html>
 <html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:v="urn:schemas-microsoft-com:vml" xmlns:o="urn:schemas-microsoft-com:office:office">
   <head>
@@ -127,23 +121,21 @@ router.post('/send-email', (req: Request, res: Response) => {
     </div>
   </body>
 </html>
-  `
+  `;
   cgMailer
-  .send(process.env.CG_EMAIL, emailTitle, emailBody)
-  .then((result) => res.status(204).send({name: name}))
-  .catch((error) => res.status(500).send(error));
+    .send(process.env.CG_EMAIL, emailTitle, emailBody)
+    .then((result) => res.status(204).send({ name: name }))
+    .catch((error) => res.status(500).send(error));
 });
 
 router.post('/send-email-nfl', (req: Request, res: Response) => {
-
-  const { name, phone, message } = req.body
+  const { name, phone, message } = req.body;
 
   const emailTitle = `Email from ${name}: ${phone}`;
 
   console.log(req.body);
 
-  const emailBody =
-  `
+  const emailBody = `
   <!doctype html>
 <html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:v="urn:schemas-microsoft-com:vml" xmlns:o="urn:schemas-microsoft-com:office:office">
   <head>
@@ -239,21 +231,19 @@ router.post('/send-email-nfl', (req: Request, res: Response) => {
     </div>
   </body>
 </html>
-  `
+  `;
 
   nflMailer
     .send(process.env.NFL_EMAIL, emailTitle, emailBody)
     .then((result) => {
-        console.log("sent");
-        res.status(204).send({});
-      }
-    )
+      console.log('sent');
+      res.status(204).send({});
+    })
     .catch((error) => res.status(500).send(error));
 });
 
 router.post('/site-visit', (req: Request, res: Response) => {
-
-  const { zip, query, region, city, country } = req.body
+  const { zip, query, region, city, country } = req.body;
 
   const message = `
   <h1>Data</h1>
@@ -266,12 +256,12 @@ router.post('/site-visit', (req: Request, res: Response) => {
 
   cgMailer
     .send(process.env.CG_EMAIL, emailTitle, `${message}`)
-    .then((result) => res.status(204).send({}))
-    .catch((error) => res.status(500).send(null));
+    .then(() => res.status(204).send({}))
+    .catch(() => res.status(500).send(null));
 });
 
 router.get('/', (req: Request, res: Response) => {
-  let reqPath = path.join(__dirname, '../../views/email.html');
+  const reqPath = path.join(__dirname, '../../views/email.html');
   console.log(reqPath);
   res.sendFile(path.join(reqPath));
 });
