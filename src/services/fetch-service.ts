@@ -1,9 +1,9 @@
 import fetch from 'node-fetch';
 
-async function returnExternalGet(url, requestOptions = {}) {
+const makeRequest = async (url: string, requestOptions = {}): Promise<any> => {
   const res = await fetch(url, requestOptions);
   const json = await res.json();
   return json;
-}
+};
 
-export default returnExternalGet;
+export default makeRequest;

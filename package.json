@@ -40,12 +40,14 @@
     "cors": "^2.8.5",
     "dotenv": "^8.2.0",
     "express": "^4.17.1",
+    "morgan": "^1.10.0",
     "node-fetch": "^2.6.0",
     "nodemon": "^2.0.4",
     "ts-mailgun": "^0.4.2",
     "ts-node": "^8.10.2",
     "tslib": "~2.0.0",
-    "typescript": "~3.9.7"
+    "typescript": "~3.9.7",
+    "winston": "^3.3.3"
   },
   "main": "src/server.js",
   "repository": "git@github.com:ChristianGracia/christiangracia-API.git"

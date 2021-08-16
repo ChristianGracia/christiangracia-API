@@ -1,13 +1,13 @@
 import express, { Request, Response } from 'express';
 const router = express.Router();
-import returnExternalGet from '../../services/fetch-service';
+import makeRequest from '../../services/fetch-service';
 import * as path from 'path';
 
 router.get('/all-repos', async (req: Request, res: Response) => {
   const { clientId, clientSecret } = process.env;
   const URL = `https://api.github.com/users/ChristianGracia/repos?per_page=20&sort=createdasc&client_id=${clientId}&client_secret=${clientSecret}`;
 
-  const json = await returnExternalGet(URL);
+  const json = await makeRequest(URL);
 
   const reducedJson = json.map((repo: any) => {
     return {
@@ -28,7 +28,7 @@ router.get('/repo-all-commits', async (req: Request, res: Response) => {
 
   const URL = `https://api.github.com/repos/christiangracia/${repoName}/commits?per_page=${amount}&client_id=${clientId}&client_secret=${clientSecret}`;
 
-  const json = await returnExternalGet(URL);
+  const json = await makeRequest(URL);
 
   const reducedJson = json.map((commit: any) => {
     return {

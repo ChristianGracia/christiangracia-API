@@ -4,10 +4,13 @@ import * as bodyParser from 'body-parser';
 import * as path from 'path';
 import * as dotenv from 'dotenv';
 import cors from 'cors';
+import morganMiddleware from './config/morgan';
 
 dotenv.config();
 
 const app = express();
+
+app.use(morganMiddleware);
 
 const router = express.Router();
 app.use(router);
