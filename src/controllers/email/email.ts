@@ -35,7 +35,7 @@ router.post('/send-email', (req: Request, res: Response) => {
       emailService.createCgEmail(name, email, message),
     )
     .then(() => res.status(200).send({ name }))
-    .catch((error) => res.status(500).send(error));
+    .catch((error) => console.log(error));
 });
 
 router.post('/send-email-nfl', (req: Request, res: Response) => {
