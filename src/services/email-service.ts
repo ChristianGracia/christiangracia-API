@@ -1,4 +1,4 @@
-module.exports = {
+export const emailService = {
   /**
    * Creates an html email as a string using passed in parameters
    * @param { string } name - Name of person who filled out form
@@ -207,6 +207,29 @@ module.exports = {
     </div>
   </body>
 </html>
+  `;
+  },
+  /**
+   * Creates an html email as a string using passed in parameters
+   * @param { string } city - city of user on site
+   * @param { string } region - region of user on site
+   * @param { string } zip - zip of user on site
+   * @param { string } country - country of user on site
+   * @param { string } query - IP address of user on site
+   */
+  createSiteVisitEmail: (
+    city: string,
+    region: string,
+    zip: string,
+    country: string,
+    ip: string,
+  ): string => {
+    return `
+  <h1>Data</h1>
+  <h1> ${city} </h1>
+  <h1> ${region} ${zip} </h1>
+  <h1> ${country} </h1>
+  <h1>ip: ${ip} </h1>
   `;
   },
 };
