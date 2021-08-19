@@ -3,7 +3,7 @@ const router = express.Router();
 import * as path from 'path';
 
 import { NodeMailgun } from 'ts-mailgun';
-import { emailService } from '../../services/email-service';
+import { emailService } from '../services/email-service';
 
 const { MAILGUN_API_KEY, MAILGUN_DOMAIN, CG_EMAIL, NFL_EMAIL } = process.env;
 
