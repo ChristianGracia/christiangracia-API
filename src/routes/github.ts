@@ -1,6 +1,6 @@
 import express, { Request, Response } from 'express';
 const router = express.Router();
-import makeRequest from '../../services/fetch-service';
+import makeRequest from '../services/fetch-service';
 import * as path from 'path';
 
 router.get('/all-repos', async (req: Request, res: Response) => {
@@ -45,7 +45,7 @@ router.get('/repo-all-commits', async (req: Request, res: Response) => {
 });
 
 router.get('/', (req: Request, res: Response) => {
-  res.sendFile(path.join(__dirname, '../../views/github.html'));
+  res.sendFile(path.join(__dirname, '../views/github.html'));
 });
 
 module.exports = router;
