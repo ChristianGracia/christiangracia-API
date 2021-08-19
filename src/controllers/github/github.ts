@@ -9,7 +9,7 @@ router.get('/all-repos', async (req: Request, res: Response) => {
 
   const json = await makeRequest(URL);
 
-  const reducedJson = json.map((repo) => {
+  const reducedJson = json.map((repo: any) => {
     return {
       url: repo.html_url,
       description: repo.description,
@@ -19,7 +19,11 @@ router.get('/all-repos', async (req: Request, res: Response) => {
     };
   });
 
-  res.send(reducedJson);
+  res.send(
+    reducedJson.sort(function (a, b) {
+      return a.updatedAt > b.updatedAt ? -1 : a.updatedAt < b.updatedAt ? 1 : 0;
+    }),
+  );
 });
 
 router.get('/repo-all-commits', async (req: Request, res: Response) => {
