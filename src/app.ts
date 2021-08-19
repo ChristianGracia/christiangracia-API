@@ -55,16 +55,16 @@ router.get('/', (req: Request, res: Response) => {
   res.sendFile(path.join(__dirname + '/views/home.html'));
 });
 
-const githubController = require('./controllers/github/github');
+const githubController = require('./routes/github');
 app.use('/github', githubController);
 
-const emailController = require('./controllers/email/email');
+const emailController = require('./routes/email');
 app.use('/email', emailController);
 
-const loginController = require('./controllers/login/login');
+const loginController = require('./routes/login');
 app.use('/login', loginController);
 
-const spotifyController = require('./controllers/spotify/spotify');
+const spotifyController = require('./routes/spotify');
 app.use('/spotify', spotifyController);
 
 export default app;
