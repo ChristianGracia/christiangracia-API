@@ -69,7 +69,7 @@ router.post('/site-visit', (req: Request, res: Response) => {
 });
 
 router.get('/', (req: Request, res: Response) => {
-  const reqPath = path.join(__dirname, '../../views/email.html');
+  const reqPath = path.join(__dirname, '../views/email.html');
   res.sendFile(path.join(reqPath));
 });
 
