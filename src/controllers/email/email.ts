@@ -29,7 +29,7 @@ router.post('/send-email', (req: Request, res: Response) => {
 
   const emailBody = `
   <!doctype html>
-<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:v="urn:schemas-microsoft-com:vml" xmlns:o="urn:schemas-microsoft-com:office:office">
+  <html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:v="urn:schemas-microsoft-com:vml" xmlns:o="urn:schemas-microsoft-com:office:office">
   <head>
     <title>
     </title>
@@ -88,8 +88,8 @@ router.post('/send-email', (req: Request, res: Response) => {
                     <tr>
                       <td style='direction:ltr;font-size:0px;padding:20px 0;text-align:center;vertical-align:top;'>
                         <!--[if mso | IE]>
-<table role="presentation" border="0" cellpadding="0" cellspacing="0"><tr><td style="vertical-align:top;width:600px;">
-<![endif]-->
+                        <table role="presentation" border="0" cellpadding="0" cellspacing="0"><tr><td style="vertical-align:top;width:600px;">
+                        <![endif]-->
                         <div class='dys-column-per-100 outlook-group-fix' style='direction:ltr;display:inline-block;font-size:13px;text-align:left;vertical-align:top;width:100%;'>
                           <table border='0' cellpadding='0' cellspacing='0' role='presentation' style='vertical-align:top;' width='100%'>
                             <tr>
@@ -109,8 +109,8 @@ router.post('/send-email', (req: Request, res: Response) => {
                           </table>
                         </div>
                         <!--[if mso | IE]>
-</td></tr></table>
-<![endif]-->
+                        </td></tr></table>
+                        <![endif]-->
                       </td>
                     </tr>
                   </tbody>
@@ -126,7 +126,11 @@ router.post('/send-email', (req: Request, res: Response) => {
   `;
   cgMailer
     .send(CG_EMAIL, emailTitle, emailBody)
-    .then((result) => res.status(204).send({ name: name }))
+    .then(() =>
+      res.status(204).send({
+        name,
+      }),
+    )
     .catch((error) => res.status(500).send(error));
 });
 
@@ -135,11 +139,9 @@ router.post('/send-email-nfl', (req: Request, res: Response) => {
 
   const emailTitle = `Email from ${name}: ${phone}`;
 
-  console.log(req.body);
-
   const emailBody = `
   <!doctype html>
-<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:v="urn:schemas-microsoft-com:vml" xmlns:o="urn:schemas-microsoft-com:office:office">
+  <html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:v="urn:schemas-microsoft-com:vml" xmlns:o="urn:schemas-microsoft-com:office:office">
   <head>
     <title>
     </title>
@@ -198,8 +200,8 @@ router.post('/send-email-nfl', (req: Request, res: Response) => {
                     <tr>
                       <td style='direction:ltr;font-size:0px;padding:20px 0;text-align:center;vertical-align:top;'>
                         <!--[if mso | IE]>
-<table role="presentation" border="0" cellpadding="0" cellspacing="0"><tr><td style="vertical-align:top;width:600px;">
-<![endif]-->
+                        <table role="presentation" border="0" cellpadding="0" cellspacing="0"><tr><td style="vertical-align:top;width:600px;">
+                        <![endif]-->
                         <div class='dys-column-per-100 outlook-group-fix' style='direction:ltr;display:inline-block;font-size:13px;text-align:left;vertical-align:top;width:100%;'>
                           <table border='0' cellpadding='0' cellspacing='0' role='presentation' style='vertical-align:top;' width='100%'>
                             <tr>
@@ -219,8 +221,8 @@ router.post('/send-email-nfl', (req: Request, res: Response) => {
                           </table>
                         </div>
                         <!--[if mso | IE]>
-</td></tr></table>
-<![endif]-->
+                        </td></tr></table>
+                        <![endif]-->
                       </td>
                     </tr>
                   </tbody>
@@ -237,7 +239,7 @@ router.post('/send-email-nfl', (req: Request, res: Response) => {
 
   nflMailer
     .send(NFL_EMAIL, emailTitle, emailBody)
-    .then((result) => {
+    .then(() => {
       console.log('sent');
       res.status(204).send({});
     })
@@ -257,14 +259,13 @@ router.post('/site-visit', (req: Request, res: Response) => {
   const emailTitle = `New visitor from ${city}, ${region}, ${zip}`;
 
   cgMailer
-    .send(process.env.CG_EMAIL, emailTitle, `${message}`)
+    .send(CG_EMAIL, emailTitle, message)
     .then(() => res.status(204).send({}))
     .catch(() => res.status(500).send(null));
 });
 
 router.get('/', (req: Request, res: Response) => {
   const reqPath = path.join(__dirname, '../../views/email.html');
-  console.log(reqPath);
   res.sendFile(path.join(reqPath));
 });
 
