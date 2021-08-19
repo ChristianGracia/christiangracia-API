@@ -9,7 +9,7 @@ router.get('/all-repos', async (req: Request, res: Response) => {
 
   const json = await makeRequest(URL);
 
-  const reducedJson = json.map((repo: any) => {
+  const reducedJson = json.map((repo) => {
     return {
       url: repo.html_url,
       description: repo.description,

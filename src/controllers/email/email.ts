@@ -4,18 +4,20 @@ import * as path from 'path';
 
 import { NodeMailgun } from 'ts-mailgun';
 
-const cgMailer = new NodeMailgun();
-cgMailer.apiKey = process.env.MAILGUN_API_KEY;
-cgMailer.domain = process.env.MAILGUN_DOMAIN;
+const { MAILGUN_API_KEY, MAILGUN_DOMAIN, CG_EMAIL, NFL_EMAIL } = process.env;
 
+// init mailer for christiangracia.com
+const cgMailer = new NodeMailgun();
+cgMailer.apiKey = MAILGUN_API_KEY;
+cgMailer.domain = MAILGUN_DOMAIN;
 cgMailer.fromEmail = 'noreply@christiangracia.com';
 cgMailer.fromTitle = 'christiangracia.com';
 cgMailer.init();
 
+// init mailer for nflandscaping.com
 const nflMailer = new NodeMailgun();
-nflMailer.apiKey = process.env.MAILGUN_API_KEY;
-nflMailer.domain = process.env.MAILGUN_DOMAIN;
-
+nflMailer.apiKey = MAILGUN_API_KEY;
+nflMailer.domain = MAILGUN_DOMAIN;
 nflMailer.fromEmail = 'noreply@nflandscaping.com';
 nflMailer.fromTitle = 'nflandscaping.com';
 nflMailer.init();
@@ -123,7 +125,7 @@ router.post('/send-email', (req: Request, res: Response) => {
 </html>
   `;
   cgMailer
-    .send(process.env.CG_EMAIL, emailTitle, emailBody)
+    .send(CG_EMAIL, emailTitle, emailBody)
     .then((result) => res.status(204).send({ name: name }))
     .catch((error) => res.status(500).send(error));
 });
@@ -234,7 +236,7 @@ router.post('/send-email-nfl', (req: Request, res: Response) => {
   `;
 
   nflMailer
-    .send(process.env.NFL_EMAIL, emailTitle, emailBody)
+    .send(NFL_EMAIL, emailTitle, emailBody)
     .then((result) => {
       console.log('sent');
       res.status(204).send({});
