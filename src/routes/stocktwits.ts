@@ -4,6 +4,18 @@ import puppeteer from 'puppeteer';
 const router = express.Router();
 
 router.post('/', async (req: Request, res: Response) => {
+  const { ticker, positiveSentiment, randomization } = req.body;
+  let { message } = req.body;
+
+  //Add random repeating character to post to avoid 60 min duplicate post limit
+  if (randomization) {
+    const currentTime = new Date();
+
+    const randomInt = currentTime.getMinutes() + currentTime.getSeconds();
+    message += '!'.repeat(randomInt);
+    console.log(message);
+  }
+
   const browserOptions = {
     headless: false,
     ignoreHTTPSErrors: true,
