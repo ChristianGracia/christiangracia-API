@@ -41,17 +41,8 @@ router.post('/', async (req: Request, res: Response) => {
   await loginButton[0].click();
 
   // Enter login credentials
-  await page.$eval(
-    'input[name=login]',
-    (el: any, value) => (el.value = value),
-    'dhdhdhd',
-  );
-
-  await page.$eval(
-    'input[name=password]',
-    (el: any, value) => (el.value = value),
-    'dhdhedhedh',
-  );
+  await page.type('input[name=login]', 'dededed');
+  await page.type('input[name=password]', 'frfrfrfr');
 
   const submitButton = await page.$x(
     '//*[@id="app"]/div/div/div[4]/div[2]/div/form/div[2]/div[1]/button',
