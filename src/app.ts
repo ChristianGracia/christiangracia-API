@@ -4,13 +4,14 @@ import * as bodyParser from 'body-parser';
 import * as path from 'path';
 import * as dotenv from 'dotenv';
 import cors from 'cors';
-import morganMiddleware from './config/morgan';
+import createError from 'http-errors';
+const morgan = require('morgan');
+const logger = require('./config/winston');
 
 dotenv.config();
 
 const app = express();
-
-app.use(morganMiddleware);
+app.use(morgan('combined', { stream: logger.stream.write }));
 
 const router = express.Router();
 app.use(router);
@@ -66,5 +67,19 @@ app.use('/login', loginController);
 
 const spotifyController = require('./routes/spotify');
 app.use('/spotify', spotifyController);
+
+const stocktwitsController = require('./routes/stocktwits');
+app.use('/stocktwits', stocktwitsController);
+
+app.use((req, res, next) => {
+  next(createError(404));
+});
+
+app.use(function (err, req, res, next) {
+  logger.error(
+    `${req.method} - ${err.message}  - ${req.originalUrl} - ${req.ip}`,
+  );
+  next(err);
+});
 
 export default app;
