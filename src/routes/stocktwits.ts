@@ -41,14 +41,30 @@ router.post('/', async (req: Request, res: Response) => {
   await loginButton[0].click();
 
   // Enter login credentials
-  await page.type('input[name=login]', 'dededed');
-  await page.type('input[name=password]', 'frfrfrfr');
+  await page.type('input[name=login]', process.env.ST_USERNAME);
+  await page.type('input[name=password]', process.env.ST_PASSWORD);
 
   const submitButton = await page.$x(
     '//*[@id="app"]/div/div/div[4]/div[2]/div/form/div[2]/div[1]/button',
   );
 
   await submitButton[0].click();
+  await page.waitForTimeout(2000);
+  const formattedMessage = `$${ticker} ${message}`;
+
+  const sentimentXpath = `//*[@id="app"]/div/div/div[3]/div[2]/div/div[1]/div/div/div[1]/div/div[2]/div[2]/div/div[1]/div/div[${
+    positiveSentiment ? '1' : '2'
+  }]`;
+
+  const sentiment = await page.$x(sentimentXpath);
+  await sentiment[0].click();
+
+  //   message_input = self.driver.find_elements_by_xpath('//*[@id="app"]/div/div/div[3]/div/div/div[1]/div/div/div[1]/div/div[2]/div[1]/div/div/div[2]/div')[0]
+  //   message_input.click()
+  //   message_input.send_keys(formatted_message)
+
+  //   submit_post_button = self.driver.find_elements_by_xpath('//*[@id="app"]/div/div/div[3]/div/div/div[1]/div/div/div[1]/div/div[3]/div[1]/button')[0]
+  //   submit_post_button.click()
 
   // await browser.close();
 });
