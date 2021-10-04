@@ -1,5 +1,6 @@
 import express, { Request, Response } from 'express';
 import puppeteer from 'puppeteer';
+import { emailService } from '../services/email-service';
 
 const router = express.Router();
 
@@ -45,7 +46,7 @@ router.post('/', async (req: Request, res: Response) => {
   );
   await submitButton[0].click();
 
-  await page.waitForTimeout(2000);
+  await page.waitForTimeout(1000);
 
   const formattedMessage = `$${ticker} ${message}`;
 
@@ -66,11 +67,53 @@ router.post('/', async (req: Request, res: Response) => {
   );
   await postButton[0].click();
 
-  // await browser.close();
+  await browser.close();
+
+  return {};
+  // return new StocktwitsReponse();
 });
 
 router.get('/', (req: Request, res: Response) => {
   res.send('hi');
+});
+
+router.get('/create-new-email', async (req: Request, res: Response) => {
+  const browserOptions = {
+    headless: false,
+    ignoreHTTPSErrors: true,
+    args: ['--no-sandbox'],
+    userAgent:
+      'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/65.0.3312.0 Safari/537.36',
+    // defaultViewport: {
+    //   width: 1600,
+    //   height: 1000,
+    // },
+  };
+  const browser = await puppeteer.launch(browserOptions);
+  const page = await browser.newPage();
+
+  await page.goto('https://account.protonmail.com/signup?language=en');
+  const frame = await page
+    .frames()
+    .find(
+      (frame) =>
+        frame.url() ===
+        'https://account-api.protonmail.com/challenge/v4/html?Type=0&Name=username',
+    );
+  await frame.$eval(
+    '#username',
+    (el: HTMLInputElement) => (el.value = 'test@example.com'),
+  );
+  await frame.$eval(
+    '#password',
+    (el: HTMLInputElement) => (el.value = 'dogdogdog1212'),
+  );
+  await frame.$eval(
+    '#repeat-password',
+    (el: HTMLInputElement) => (el.value = 'dogdogdog1212'),
+  );
+
+  return {};
 });
 
 module.exports = router;

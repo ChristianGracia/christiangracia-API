@@ -232,4 +232,13 @@ export const emailService = {
   <h1>ip: ${ip} </h1>
   `;
   },
+  /**
+   * Creates an html email as a string using passed in parameters
+   * @param { string } name - Name of person who filled out form
+   * @param { string } email - Email of person who filled out form
+   * @param { number } message - Message from person who filled out form
+   */
+  createProtonEmail: (): string => {
+    return '';
+  },
 };
