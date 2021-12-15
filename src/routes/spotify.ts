@@ -28,7 +28,7 @@ const generateRandomString = function (length) {
 
 const stateKey = 'spotify_auth_state';
 
-router.get('/login', (req: Request, res: Response) => {
+router.get('/login', function (req, res) {
   const state = generateRandomString(16);
   res.cookie(stateKey, state);
   const scope = 'user-read-private user-read-email user-read-currently-playing';
@@ -44,7 +44,7 @@ router.get('/login', (req: Request, res: Response) => {
   );
 });
 
-router.get('/callback', (req: Request, res: Response) => {
+router.get('/callback', function (req, res) {
   const code = req.query.code || null;
   const state = req.query.state || null;
   const storedState = req.cookies ? req.cookies[stateKey] : null;
@@ -108,7 +108,7 @@ router.get('/callback', (req: Request, res: Response) => {
   }
 });
 
-router.get('/refresh_token', (req: Request, res: Response) => {
+router.get('/refresh_token', function (req, res) {
   const refresh_token = req.query.refresh_token;
   const authOptions = {
     url: 'https://accounts.spotify.com/api/token',

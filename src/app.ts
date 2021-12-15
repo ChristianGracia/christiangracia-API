@@ -33,18 +33,23 @@ const options: cors.CorsOptions = {
 
 app.use(function (req, res, next) {
   res.header('Access-Control-Allow-Origin', '*');
-  res.header('Access-Control-Allow-Credentials', 'true');
-  res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS');
+  res.header(
+    'Access-Control-Allow-Methods',
+    'GET, POST, PUT, PATCH, POST, DELETE, OPTIONS',
+  );
   res.header(
     'Access-Control-Allow-Headers',
-    'Origin,X-Requested-With,Content-Type,Accept,content-type,application/json',
+    'Origin, Content-Type, Accept, Authorization, X-Request-With',
   );
+  res.header('Access-Control-Max-Age', '86400');
+  res.header('Access-Control-Expose-Headers', 'Content-Length, X-JSON');
+  res.header('Content-Type', 'application/json');
   next();
 });
 
-router.use(cors(options));
+app.use(cors(options));
 
-router.options('*', cors(options));
+app.options('*', cors(options));
 
 app.set('port', process.env.PORT || 3000);
 
