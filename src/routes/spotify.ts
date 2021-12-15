@@ -6,9 +6,9 @@ const cookieParser = require('cookie-parser');
 
 const router = express.Router();
 
-const client_id = '26963019e1024cf0b59bca8af96d0837';
-const client_secret = '3353e613f8184bcf9f87fca199b8f643';
-const redirect_uri = 'http://localhost:3000/spotify/callback';
+const client_id = process.env.SPOTIFY_CLIENT_ID;
+const client_secret = process.env.SPOTIFY_CLIENT_SECRET;
+const redirect_uri = process.env.SPOTIFY_REDIRECT_URL;
 
 /**
  * Generates a random string containing numbers and letters
