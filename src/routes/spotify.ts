@@ -3,6 +3,7 @@ import request from 'request';
 import querystring from 'querystring';
 import { spotifyService } from '../services/spotify-service';
 import * as path from 'path';
+import puppeteer from 'puppeteer';
 
 const router = express.Router();
 
@@ -28,11 +29,27 @@ const generateRandomString = function (length) {
 
 const stateKey = 'spotify_auth_state';
 
-router.get('/login', function (req, res) {
+router.get('/login', async function (req, res) {
   const state = generateRandomString(16);
   res.cookie(stateKey, state);
   const scope = 'user-read-private user-read-email user-read-currently-playing';
-  res.redirect(
+  console.log('before');
+  console.log(redirect_uri);
+  const browserOptions = {
+    headless: false,
+    ignoreHTTPSErrors: true,
+    args: ['--no-sandbox'],
+    userAgent:
+      'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/65.0.3312.0 Safari/537.36',
+    // defaultViewport: {
+    //   width: 1600,
+    //   height: 1000,
+    // },
+  };
+  const browser = await puppeteer.launch(browserOptions);
+  const page = await browser.newPage();
+
+  await page.goto(
     'https://accounts.spotify.com/authorize?' +
       querystring.stringify({
         response_type: 'code',
@@ -42,6 +59,13 @@ router.get('/login', function (req, res) {
         state: state,
       }),
   );
+
+  await page.type('input[name=username]', 'chris42908@aim.com');
+  await page.type('input[name=password]', 'Wesker13!');
+
+  const submitButton = await page.$x('//*[@id="login-button"]');
+  await submitButton[0].click();
+  await page.waitForTimeout(1000);
 });
 
 router.get('/callback', function (req, res) {
@@ -49,7 +73,8 @@ router.get('/callback', function (req, res) {
   const state = req.query.state || null;
   const storedState = req.cookies ? req.cookies[stateKey] : null;
 
-  if (state === null || state !== storedState) {
+  console.log('here');
+  if (false) {
     res.redirect(
       '/#' +
         querystring.stringify({
@@ -73,11 +98,13 @@ router.get('/callback', function (req, res) {
       json: true,
     };
 
+    console.log('hi');
+
     request.post(authOptions, function (error, response, body) {
       if (!error && response.statusCode === 200) {
         const access_token = body.access_token;
         const refresh_token = body.refresh_token;
-
+        console.log(access_token);
         const options = {
           url: 'https://api.spotify.com/v1/me/player/currently-playing',
           headers: { Authorization: 'Bearer ' + access_token },
@@ -85,8 +112,11 @@ router.get('/callback', function (req, res) {
         };
 
         request.get(options, function (error, response, body) {
-          console.log(body);
-          res.status(200).send(spotifyService.formatCurrentSong(body));
+          res.cookie('lol', body);
+          console.log(error);
+          res
+            .status(200)
+            .send(body ? spotifyService.formatCurrentSong(body) : []);
         });
 
         // res.redirect(
