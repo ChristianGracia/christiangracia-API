@@ -4,6 +4,7 @@ import * as bodyParser from 'body-parser';
 import * as path from 'path';
 import * as dotenv from 'dotenv';
 import cors from 'cors';
+import cookieParser from 'cookie-parser';
 import createError from 'http-errors';
 const morgan = require('morgan');
 const logger = require('./config/winston');
@@ -47,6 +48,7 @@ router.options('*', cors(options));
 
 app.set('port', process.env.PORT || 3000);
 
+app.use(cookieParser());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
