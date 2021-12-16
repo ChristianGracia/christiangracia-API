@@ -13,7 +13,7 @@ const client_user = process.env.SPOTIFY_CLIENT_USER;
 const client_password = process.env.SPOTIFY_CLIENT_PASSWORD;
 const redirect_uri = process.env.SPOTIFY_REDIRECT_URL;
 
-var access_token = 'BQDxAjZBa8DJMvczf0-PRDXavtxf7eZw0Lyj2z00W1G-4TPJKb6nGd4uUGzVpeAhoy-gWZHBe1o1fmV7cZkEMEuD_QvzVRRsgEzxNb_6xQnLTeBqHrBbb0eLF85-zC4z75L4N6CR06yhll4lgBapSCF8LUvYIzjpytSo';
+var access_token = 'BQDnZmJtd-wvw7jn3xB6gRG_Wpogt0ziRVCXFfeAk-3Ppf4gabQE-SK8GN0F-ca09WF-GLNYrFgy5teo1mIRaRCdeuxPLfGgPRnqTOcSNtw9TBJwuz3i5AzoF8U50l-D51BxrfcdkHyWcSKZXoDo9s7HZ00bSrqjXJMj';
 var refresh_token = 'AQDkdHhVrHeIzspq9r-CnJes35IjHvEHCQNNPTmNYLqh5DZ-W-l-TFWvG5isdumFvMW0gpYxjjcO5U1aC1ssY5reBu24bE6FxCNxz5Jt3hOf7E_Vs-DQKArXPyfv_ES1UYw';
 
 // async function test() {
