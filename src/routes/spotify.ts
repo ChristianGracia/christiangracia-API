@@ -14,7 +14,7 @@ const client_user = process.env.SPOTIFY_CLIENT_USER;
 const client_password = process.env.SPOTIFY_CLIENT_PASSWORD;
 const redirect_uri = process.env.SPOTIFY_REDIRECT_URL;
 
-const minutes = 45,
+const minutes = 5,
   intervalLength = minutes * 60 * 1000;
 setInterval(function () {
   access_token = '';
@@ -46,9 +46,9 @@ async function refreshToken() {
       access_token = body.access_token;
 
       const emailOptions = {
-        url: 'http://localhost:3000/email/job-ran',
-        body: {
-          'job-type': 'refresh',
+        url: 'https://christiangracia-api.herokuapp.com/email/job-ran',
+        form: {
+          jobType: 'refresh',
           message: 'token refreshed',
         },
       };
@@ -61,6 +61,8 @@ async function refreshToken() {
     }
   });
 }
+
+getToken();
 
 async function getToken() {
   console.log('puppeteer incoming');
@@ -104,9 +106,9 @@ async function getToken() {
   });
 
   const emailOptions = {
-    url: 'http://localhost:3000/email/job-ran',
-    body: {
-      'job-type': 'puppeteer script',
+    url: 'https://christiangracia-api.herokuapp.com/email/job-ran',
+    form: {
+      jobType: 'puppeteer script',
       message: 'puppeteer script ran',
     },
   };
