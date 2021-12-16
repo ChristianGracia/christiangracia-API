@@ -14,7 +14,7 @@ const client_user = process.env.SPOTIFY_CLIENT_USER;
 const client_password = process.env.SPOTIFY_CLIENT_PASSWORD;
 const redirect_uri = process.env.SPOTIFY_REDIRECT_URL;
 
-const minutes = 5,
+const minutes = 45,
   intervalLength = minutes * 60 * 1000;
 setInterval(function () {
   access_token = '';
