@@ -90,7 +90,7 @@ router.get('/login', async function (req, res) {
     console.log('before');
     console.log(redirect_uri);
     const browserOptions = {
-      headless: false,
+      headless: true,
       ignoreHTTPSErrors: true,
       args: ['--no-sandbox', '--disable-setuid-sandbox'],
       dumpio: true,
@@ -104,35 +104,40 @@ router.get('/login', async function (req, res) {
     const browser = await puppeteer.launch(browserOptions);
     const page = await browser.newPage();
 
-    await page.goto(
-      'https://accounts.spotify.com/authorize?' +
-        querystring.stringify({
-          response_type: 'code',
-          client_id: client_id,
-          scope: scope,
-          redirect_uri: redirect_uri,
-          state: state,
-        }),
-    );
+    try {
+      await page.goto(
+        'https://accounts.spotify.com/authorize?' +
+          querystring.stringify({
+            response_type: 'code',
+            client_id: client_id,
+            scope: scope,
+            redirect_uri: redirect_uri,
+            state: state,
+          }),
+      );
 
-    await page.type('input[name=username]', client_user);
-    await page.type('input[name=password]', client_password);
+      await page.type('input[name=username]', client_user);
+      await page.type('input[name=password]', client_password);
 
-    const submitButton = await page.$x('//*[@id="login-button"]');
-    await page.waitForTimeout(500);
-    await submitButton[0].click();
-    await page.waitForTimeout(1000);
+      const submitButton = await page.$x('//*[@id="login-button"]');
+      await page.waitForTimeout(500);
+      await submitButton[0].click();
+      await page.waitForTimeout(1000);
 
-    const innerText = await page.evaluate(() => {
-      return JSON.parse(document.querySelector('body').innerText);
-    });
+      const innerText = await page.evaluate(() => {
+        return JSON.parse(document.querySelector('body').innerText);
+      });
 
-    console.log('innerText now contains the JSON');
-    console.log(innerText);
+      console.log('innerText now contains the JSON');
+      console.log(innerText);
 
-    await browser.close();
-    loading = false;
-    res.status(200).json(innerText);
+      await browser.close();
+      loading = false;
+      res.status(200).json(innerText);
+    } catch {
+      await browser.close();
+      res.status(500).json([]);
+    }
   } else {
     res.status(204).json([]);
   }
