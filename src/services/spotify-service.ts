@@ -9,7 +9,7 @@ export const spotifyService = {
         progress: song.progress_ms,
         duration: song.item.duration_ms,
         artist: song.item.album.artists[0].name,
-        song: song.item.name,
+        name: song.item.name,
         images: song.item.album.images,
       },
     ];

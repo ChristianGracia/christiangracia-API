@@ -38,7 +38,7 @@ router.get('/login', async function (req, res) {
   console.log('before');
   console.log(redirect_uri);
   const browserOptions = {
-    headless: false,
+    headless: true,
     ignoreHTTPSErrors: true,
     args: ['--no-sandbox'],
     dumpio: true,
