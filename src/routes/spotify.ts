@@ -77,69 +77,60 @@ const generateRandomString = function (length) {
 };
 
 const stateKey = 'spotify_auth_state';
-let loading = false;
 
 router.get('/login', async function (req, res) {
-  if (!loading) {
-    loading = true;
+  const state = generateRandomString(16);
+  res.cookie(stateKey, state);
+  const scope = 'user-read-private user-read-email user-read-currently-playing';
+  console.log('before');
+  console.log(redirect_uri);
+  const browserOptions = {
+    headless: true,
+    ignoreHTTPSErrors: true,
+    args: ['--no-sandbox', '--disable-setuid-sandbox'],
+    dumpio: true,
+    userAgent:
+      'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/65.0.3312.0 Safari/537.36',
+    // defaultViewport: {
+    //   width: 1600,
+    //   height: 1000,
+    // },
+  };
+  const browser = await puppeteer.launch(browserOptions);
+  const page = await browser.newPage();
 
-    const state = generateRandomString(16);
-    res.cookie(stateKey, state);
-    const scope =
-      'user-read-private user-read-email user-read-currently-playing';
-    console.log('before');
-    console.log(redirect_uri);
-    const browserOptions = {
-      headless: true,
-      ignoreHTTPSErrors: true,
-      args: ['--no-sandbox', '--disable-setuid-sandbox'],
-      dumpio: true,
-      userAgent:
-        'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/65.0.3312.0 Safari/537.36',
-      // defaultViewport: {
-      //   width: 1600,
-      //   height: 1000,
-      // },
-    };
-    const browser = await puppeteer.launch(browserOptions);
-    const page = await browser.newPage();
+  try {
+    await page.goto(
+      'https://accounts.spotify.com/authorize?' +
+        querystring.stringify({
+          response_type: 'code',
+          client_id: client_id,
+          scope: scope,
+          redirect_uri: redirect_uri,
+          state: state,
+        }),
+    );
 
-    try {
-      await page.goto(
-        'https://accounts.spotify.com/authorize?' +
-          querystring.stringify({
-            response_type: 'code',
-            client_id: client_id,
-            scope: scope,
-            redirect_uri: redirect_uri,
-            state: state,
-          }),
-      );
+    await page.type('input[name=username]', client_user);
+    await page.type('input[name=password]', client_password);
 
-      await page.type('input[name=username]', client_user);
-      await page.type('input[name=password]', client_password);
+    const submitButton = await page.$x('//*[@id="login-button"]');
+    await page.waitForTimeout(500);
+    await submitButton[0].click();
+    await page.waitForTimeout(1000);
 
-      const submitButton = await page.$x('//*[@id="login-button"]');
-      await page.waitForTimeout(500);
-      await submitButton[0].click();
-      await page.waitForTimeout(1000);
+    const innerText = await page.evaluate(() => {
+      return JSON.parse(document.querySelector('body').innerText);
+    });
 
-      const innerText = await page.evaluate(() => {
-        return JSON.parse(document.querySelector('body').innerText);
-      });
+    console.log('innerText now contains the JSON');
+    console.log(innerText);
 
-      console.log('innerText now contains the JSON');
-      console.log(innerText);
-
-      await browser.close();
-      loading = false;
-      res.status(200).json(innerText);
-    } catch {
-      await browser.close();
-      res.status(500).json([]);
-    }
-  } else {
-    res.status(204).json([]);
+    await browser.close();
+    res.status(200).json(innerText);
+  } catch {
+    await browser.close();
+    res.status(500).json([]);
   }
 });
 
