@@ -9,6 +9,8 @@ const router = express.Router();
 
 const client_id = process.env.SPOTIFY_CLIENT_ID;
 const client_secret = process.env.SPOTIFY_CLIENT_SECRET;
+const client_user = process.env.SPOTIFY_CLIENT_USER;
+const client_password = process.env.SPOTIFY_CLIENT_PASSWORD;
 const redirect_uri = process.env.SPOTIFY_REDIRECT_URL;
 
 /**
@@ -39,6 +41,7 @@ router.get('/login', async function (req, res) {
     headless: false,
     ignoreHTTPSErrors: true,
     args: ['--no-sandbox'],
+    dumpio: true,
     userAgent:
       'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/65.0.3312.0 Safari/537.36',
     // defaultViewport: {
@@ -60,12 +63,23 @@ router.get('/login', async function (req, res) {
       }),
   );
 
-  await page.type('input[name=username]', 'chris42908@aim.com');
-  await page.type('input[name=password]', 'Wesker13!');
+  await page.type('input[name=username]', client_user);
+  await page.type('input[name=password]', client_password);
 
   const submitButton = await page.$x('//*[@id="login-button"]');
-  await submitButton[0].click();
   await page.waitForTimeout(1000);
+  await submitButton[0].click();
+  await page.waitForTimeout(5000);
+
+  const innerText = await page.evaluate(() => {
+    return JSON.parse(document.querySelector('body').innerText);
+  });
+
+  console.log('innerText now contains the JSON');
+  console.log(innerText);
+
+  await browser.close();
+  res.status(200).json(innerText);
 });
 
 router.get('/callback', function (req, res) {
