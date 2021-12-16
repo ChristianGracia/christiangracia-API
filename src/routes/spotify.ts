@@ -13,6 +13,9 @@ const client_user = process.env.SPOTIFY_CLIENT_USER;
 const client_password = process.env.SPOTIFY_CLIENT_PASSWORD;
 const redirect_uri = process.env.SPOTIFY_REDIRECT_URL;
 
+var access_token = 'BQDxAjZBa8DJMvczf0-PRDXavtxf7eZw0Lyj2z00W1G-4TPJKb6nGd4uUGzVpeAhoy-gWZHBe1o1fmV7cZkEMEuD_QvzVRRsgEzxNb_6xQnLTeBqHrBbb0eLF85-zC4z75L4N6CR06yhll4lgBapSCF8LUvYIzjpytSo';
+var refresh_token = 'AQDkdHhVrHeIzspq9r-CnJes35IjHvEHCQNNPTmNYLqh5DZ-W-l-TFWvG5isdumFvMW0gpYxjjcO5U1aC1ssY5reBu24bE6FxCNxz5Jt3hOf7E_Vs-DQKArXPyfv_ES1UYw';
+
 // async function test() {
 //   const state = 'dkedkekdekdked';
 //   const scope = 'user-read-private user-read-email user-read-currently-playing';
@@ -134,16 +137,82 @@ router.get('/login', async function (req, res) {
   //   res.status(500).json([]);
   // }
 
-  res.redirect(
-    'https://accounts.spotify.com/authorize?' +
-      querystring.stringify({
-        response_type: 'code',
-        client_id: client_id,
-        scope: scope,
-        redirect_uri: redirect_uri,
-        state: state,
-      }),
-  );
+  if (access_token) {
+    console.log('access_token');
+    const options = {
+      url: 'https://api.spotify.com/v1/me/player/currently-playing',
+      headers: {
+        Authorization:
+          'Bearer ' + access_token,
+      },
+      json: true,
+    };
+
+    request.get(options, function (error, response, body) {
+      if (body) {
+        res
+        .status(200)
+        .send(body ? spotifyService.formatCurrentSong(body) : []);
+      } else {
+        const authOptions = {
+          url: 'https://accounts.spotify.com/api/token',
+          headers: {
+            Authorization:
+              'Basic ' +
+              new Buffer(client_id + ':' + client_secret).toString('base64'),
+          },
+          form: {
+            grant_type: 'refresh_token',
+            refresh_token: refresh_token,
+          },
+          json: true,
+        };
+      
+        request.post(authOptions, function (error, response, body) {
+          if (!error && response.statusCode === 200) {
+            console.log('refreshed!')
+            console.log(body)
+            refresh_token = body.refresh_token;
+            access_token = body.access_token;
+            
+
+            const options = {
+              url: 'https://api.spotify.com/v1/me/player/currently-playing',
+              headers: {
+                Authorization:
+                  'Bearer ' + access_token,
+              },
+              json: true,
+            };
+        
+            request.get(options, function (error, response, body) {
+              if (body) {
+                res
+                .status(200)
+                .send(body ? spotifyService.formatCurrentSong(body) : []);
+              }
+              })
+          }
+        });
+        
+      }
+    });
+
+  }
+   else {
+     console.log('creating new token');
+    res.redirect(
+      'https://accounts.spotify.com/authorize?' +
+        querystring.stringify({
+          response_type: 'code',
+          client_id: client_id,
+          scope: scope,
+          redirect_uri: redirect_uri,
+          state: state,
+        }),
+    );
+
+   }
 });
 
 router.get('/callback', function (req, res) {
@@ -180,16 +249,18 @@ router.get('/callback', function (req, res) {
     console.log('hi');
 
     request.post(authOptions, function (error, response, body) {
+      console.log(error)
+      console.log(body)
       if (!error && response.statusCode === 200) {
-        const access_token = body.access_token;
-        const refresh_token = body.refresh_token;
+        access_token = body.access_token;
+        refresh_token = body.refresh_token;
         console.log(refresh_token);
         console.log(access_token);
         const options = {
           url: 'https://api.spotify.com/v1/me/player/currently-playing',
           headers: {
             Authorization:
-              'Bearer BQA9GhkMZumtjAtCt_WfTqRcRB5aAk-90NV6zg65gcu78oL_hLZCQ4lUrxG84Qx9f_wDLa2yg8cwV_ZG7ZvdXADsZcXim29V-J-WeMqwWxcC_cs7M9SCtBeKfXzfEPt_u3lheq8gsHBy-20MklSbG2xs979Klt6bNTC8',
+              'Bearer BQC9bhASgRouUvHhr0kXIC3I6shfm5qNQbJv7AaSqmR7y2ctSiJiiJUbSas4WRom62NdAKrf7ll1CjJ9hi4T6GV7zmJadxplzo0-fHOa7BphCVD7GCmozXQBQcDpZumqrDiywo6rQEaEbzAyt9DvbxGDuTt0F36UsZQP',
           },
           json: true,
         };
