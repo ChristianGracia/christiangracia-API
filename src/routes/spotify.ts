@@ -85,7 +85,7 @@ router.get('/login', async function (req, res) {
   console.log('before');
   console.log(redirect_uri);
   const browserOptions = {
-    headless: true,
+    // headless: true,
     ignoreHTTPSErrors: true,
     args: ['--no-sandbox', '--disable-setuid-sandbox'],
     dumpio: true,
