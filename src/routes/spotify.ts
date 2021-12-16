@@ -13,21 +13,22 @@ const client_user = process.env.SPOTIFY_CLIENT_USER;
 const client_password = process.env.SPOTIFY_CLIENT_PASSWORD;
 const redirect_uri = process.env.SPOTIFY_REDIRECT_URL;
 
-const minutes = 45, the_interval = minutes * 60 * 1000;
-setInterval(function() {
-  console.log('interval time')
-  test()
+const minutes = 45,
+  the_interval = minutes * 60 * 1000;
+setInterval(function () {
+  console.log('interval time');
+  test();
 }, the_interval);
 
 var access_token = '';
 var refresh_token = '';
 
 async function test() {
-  console.log('puppeteer incoming')
+  console.log('puppeteer incoming');
   const state = 'dkedkekdekdked';
   const scope = 'user-read-private user-read-email user-read-currently-playing';
   const browserOptions = {
-    headless: false,
+    headless: true,
     ignoreHTTPSErrors: true,
     args: ['--no-sandbox', '--disable-setuid-sandbox'],
     dumpio: true,
@@ -59,11 +60,11 @@ async function test() {
   await submitButton[0].click();
   await page.waitForTimeout(5000);
 
-const songData = await page.evaluate(() => {
-  return JSON.parse(document.querySelector('body').innerText);
-});
+  const songData = await page.evaluate(() => {
+    return JSON.parse(document.querySelector('body').innerText);
+  });
 
-console.log(songData);
+  console.log(songData);
 
   await browser.close();
 }
@@ -147,8 +148,7 @@ router.get('/login', async function (req, res) {
     const options = {
       url: 'https://api.spotify.com/v1/me/player/currently-playing',
       headers: {
-        Authorization:
-          'Bearer ' + access_token,
+        Authorization: 'Bearer ' + access_token,
       },
       json: true,
     };
@@ -156,10 +156,10 @@ router.get('/login', async function (req, res) {
     request.get(options, function (error, response, body) {
       if (body) {
         res
-        .status(200)
-        .send(body ? spotifyService.formatCurrentSong(body) : []);
+          .status(200)
+          .send(body ? spotifyService.formatCurrentSong(body) : []);
       } else {
-        console.log('token fail attempting refresh')
+        console.log('token fail attempting refresh');
         const authOptions = {
           url: 'https://accounts.spotify.com/api/token',
           headers: {
@@ -173,42 +173,37 @@ router.get('/login', async function (req, res) {
           },
           json: true,
         };
-      
+
         request.post(authOptions, function (error, response, body) {
           if (!error && response.statusCode === 200) {
-            console.log('refreshed!')
-            console.log(body)
+            console.log('refreshed!');
+            console.log(body);
             refresh_token = body.refresh_token;
             access_token = body.access_token;
-            
 
             const options = {
               url: 'https://api.spotify.com/v1/me/player/currently-playing',
               headers: {
-                Authorization:
-                  'Bearer ' + access_token,
+                Authorization: 'Bearer ' + access_token,
               },
               json: true,
             };
-        
+
             request.get(options, function (error, response, body) {
               if (body) {
                 res
-                .status(200)
-                .send(body ? spotifyService.formatCurrentSong(body) : []);
+                  .status(200)
+                  .send(body ? spotifyService.formatCurrentSong(body) : []);
               }
-              })
+            });
           }
         });
-        
       }
     });
-
-  }
-   else {
-     console.log('creating new token');
-     refresh_token = '';
-     test();
+  } else {
+    console.log('creating new token');
+    refresh_token = '';
+    test();
     // res.redirect(
     //   'https://accounts.spotify.com/authorize?' +
     //     querystring.stringify({
@@ -219,8 +214,7 @@ router.get('/login', async function (req, res) {
     //       state: state,
     //     }),
     // );
-
-   }
+  }
 });
 
 router.get('/callback', function (req, res) {
@@ -257,20 +251,19 @@ router.get('/callback', function (req, res) {
     console.log('hi');
 
     request.post(authOptions, function (error, response, body) {
-      console.log(error)
-      console.log(body)
+      console.log(error);
+      console.log(body);
       if (!error && response.statusCode === 200) {
         access_token = body.access_token;
         refresh_token = body.refresh_token;
         console.log('new access token');
         console.log(access_token);
-        console.log('new refresh_token')
+        console.log('new refresh_token');
         console.log(refresh_token);
         const options = {
           url: 'https://api.spotify.com/v1/me/player/currently-playing',
           headers: {
-            Authorization:
-              'Bearer ' + access_token,
+            Authorization: 'Bearer ' + access_token,
           },
           json: true,
         };
