@@ -119,6 +119,7 @@ router.get('/login', async function (req, res) {
 
   if (access_token) {
     console.log('access_token here');
+    console.log(access_token);
     const options = {
       url: 'https://api.spotify.com/v1/me/player/currently-playing',
       headers: {
@@ -175,7 +176,7 @@ router.get('/login', async function (req, res) {
       }
     });
   } else {
-    await getToken();
+    getToken();
   }
 });
 
