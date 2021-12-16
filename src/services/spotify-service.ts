@@ -11,6 +11,7 @@ export const spotifyService = {
         artist: song.item.album.artists[0].name,
         name: song.item.name,
         images: song.item.album.images.map((imgArr) => imgArr['url']),
+        previewUrl: song.item.preview_url,
       },
     ];
   },
