@@ -68,6 +68,16 @@ router.post('/site-visit', (req: Request, res: Response) => {
     .catch(() => res.status(500).send(null));
 });
 
+router.post('/job-ran', (req: Request, res: Response) => {
+  const { jobType, message } = req.body;
+  const emailTitle = `christiangracia.com - Job | ${jobType} |`;
+
+  cgMailer
+    .send(CG_EMAIL, emailTitle, emailService.createCgEmail('', '', message))
+    .then(() => res.status(200).send({ 'job-ran': true }))
+    .catch((error) => res.status(500).send(error));
+});
+
 router.get('/', (req: Request, res: Response) => {
   const reqPath = path.join(__dirname, '../views/email.html');
   res.sendFile(path.join(reqPath));

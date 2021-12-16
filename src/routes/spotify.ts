@@ -2,6 +2,7 @@ import express, { Request, Response } from 'express';
 import request from 'request';
 import querystring from 'querystring';
 import { spotifyService } from '../services/spotify-service';
+
 import * as path from 'path';
 import puppeteer from 'puppeteer';
 
@@ -13,7 +14,7 @@ const client_user = process.env.SPOTIFY_CLIENT_USER;
 const client_password = process.env.SPOTIFY_CLIENT_PASSWORD;
 const redirect_uri = process.env.SPOTIFY_REDIRECT_URL;
 
-const minutes = 45,
+const minutes = 1,
   intervalLength = minutes * 60 * 1000;
 setInterval(function () {
   access_token = '';
@@ -43,6 +44,20 @@ async function refreshToken() {
       console.log('refreshed token using refresh!');
       refresh_token = body.refresh_token;
       access_token = body.access_token;
+
+      const emailOptions = {
+        url: 'http://localhost:3000/email/job-ran',
+        body: {
+          'job-type': 'refresh',
+          message: 'token refreshed',
+        },
+      };
+
+      request.post(emailOptions, function (error, response, body) {
+        console.error('error:', error);
+        console.log('statusCode:', response && response.statusCode);
+        console.log('body:', body);
+      });
     }
   });
 }
@@ -88,8 +103,19 @@ async function getToken() {
     return JSON.parse(document.querySelector('body').innerText);
   });
 
-  console.log(songData);
+  const emailOptions = {
+    url: 'http://localhost:3000/email/job-ran',
+    body: {
+      'job-type': 'puppeteer script',
+      message: 'puppeteer script ran',
+    },
+  };
 
+  request.post(emailOptions, function (error, response, body) {
+    console.error('error:', error);
+    console.log('statusCode:', response && response.statusCode);
+    console.log('body:', body);
+  });
   await browser.close();
 }
 
