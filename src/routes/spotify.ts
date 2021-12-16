@@ -13,6 +13,53 @@ const client_user = process.env.SPOTIFY_CLIENT_USER;
 const client_password = process.env.SPOTIFY_CLIENT_PASSWORD;
 const redirect_uri = process.env.SPOTIFY_REDIRECT_URL;
 
+// async function test() {
+//   const state = 'dkedkekdekdked';
+//   const scope = 'user-read-private user-read-email user-read-currently-playing';
+//   const browserOptions = {
+//     headless: false,
+//     ignoreHTTPSErrors: true,
+//     args: ['--no-sandbox', '--disable-setuid-sandbox'],
+//     dumpio: true,
+//     userAgent:
+//       'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/65.0.3312.0 Safari/537.36',
+//     // defaultViewport: {
+//     //   width: 1600,
+//     //   height: 1000,
+//     // },
+//   };
+//   const browser = await puppeteer.launch(browserOptions);
+//   const page = await browser.newPage();
+//   await page.goto(
+//     'https://accounts.spotify.com/authorize?' +
+//       querystring.stringify({
+//         response_type: 'code',
+//         client_id: client_id,
+//         scope: scope,
+//         redirect_uri: redirect_uri,
+//         state: state,
+//       }),
+//   );
+//   await page.waitForTimeout(2000);
+//   await page.type('input[name=username]', client_user);
+//   await page.type('input[name=password]', client_password);
+
+//   const submitButton = await page.$x('//*[@id="login-button"]');
+//   await page.waitForTimeout(1000);
+//   await submitButton[0].click();
+//   await page.waitForTimeout(5000);
+
+// const innerText = await page.evaluate(() => {
+//   return JSON.parse(document.querySelector('body').innerText);
+// });
+
+// console.log('innerText now contains the JSON');
+// console.log(innerText);
+
+//   await browser.close();
+// }
+
+// test();
 /**
  * Generates a random string containing numbers and letters
  * @param  {number} length The length of the string
@@ -30,56 +77,65 @@ const generateRandomString = function (length) {
 };
 
 const stateKey = 'spotify_auth_state';
+let loading = false;
 
 router.get('/login', async function (req, res) {
-  const state = generateRandomString(16);
-  res.cookie(stateKey, state);
-  const scope = 'user-read-private user-read-email user-read-currently-playing';
-  console.log('before');
-  console.log(redirect_uri);
-  const browserOptions = {
-    headless: true,
-    ignoreHTTPSErrors: true,
-    args: ['--no-sandbox', '--disable-setuid-sandbox'],
-    dumpio: true,
-    userAgent:
-      'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/65.0.3312.0 Safari/537.36',
-    // defaultViewport: {
-    //   width: 1600,
-    //   height: 1000,
-    // },
-  };
-  const browser = await puppeteer.launch(browserOptions);
-  const page = await browser.newPage();
+  if (!loading) {
+    loading = true;
 
-  await page.goto(
-    'https://accounts.spotify.com/authorize?' +
-      querystring.stringify({
-        response_type: 'code',
-        client_id: client_id,
-        scope: scope,
-        redirect_uri: redirect_uri,
-        state: state,
-      }),
-  );
+    const state = generateRandomString(16);
+    res.cookie(stateKey, state);
+    const scope =
+      'user-read-private user-read-email user-read-currently-playing';
+    console.log('before');
+    console.log(redirect_uri);
+    const browserOptions = {
+      headless: false,
+      ignoreHTTPSErrors: true,
+      args: ['--no-sandbox', '--disable-setuid-sandbox'],
+      dumpio: true,
+      userAgent:
+        'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/65.0.3312.0 Safari/537.36',
+      // defaultViewport: {
+      //   width: 1600,
+      //   height: 1000,
+      // },
+    };
+    const browser = await puppeteer.launch(browserOptions);
+    const page = await browser.newPage();
 
-  await page.type('input[name=username]', client_user);
-  await page.type('input[name=password]', client_password);
+    await page.goto(
+      'https://accounts.spotify.com/authorize?' +
+        querystring.stringify({
+          response_type: 'code',
+          client_id: client_id,
+          scope: scope,
+          redirect_uri: redirect_uri,
+          state: state,
+        }),
+    );
 
-  const submitButton = await page.$x('//*[@id="login-button"]');
-  await page.waitForTimeout(1000);
-  await submitButton[0].click();
-  await page.waitForTimeout(5000);
+    await page.type('input[name=username]', client_user);
+    await page.type('input[name=password]', client_password);
 
-  const innerText = await page.evaluate(() => {
-    return JSON.parse(document.querySelector('body').innerText);
-  });
+    const submitButton = await page.$x('//*[@id="login-button"]');
+    await page.waitForTimeout(500);
+    await submitButton[0].click();
+    await page.waitForTimeout(1000);
 
-  console.log('innerText now contains the JSON');
-  console.log(innerText);
+    const innerText = await page.evaluate(() => {
+      return JSON.parse(document.querySelector('body').innerText);
+    });
 
-  await browser.close();
-  res.status(200).json(innerText);
+    console.log('innerText now contains the JSON');
+    console.log(innerText);
+
+    await browser.close();
+    loading = false;
+    res.status(200).json(innerText);
+  } else {
+    res.status(204).json([]);
+  }
 });
 
 router.get('/callback', function (req, res) {
