@@ -84,54 +84,66 @@ router.get('/login', async function (req, res) {
   const scope = 'user-read-private user-read-email user-read-currently-playing';
   console.log('before');
   console.log(redirect_uri);
-  const browserOptions = {
-    // headless: true,
-    ignoreHTTPSErrors: true,
-    args: ['--no-sandbox', '--disable-setuid-sandbox'],
-    dumpio: true,
-    userAgent:
-      'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/65.0.3312.0 Safari/537.36',
-    // defaultViewport: {
-    //   width: 1600,
-    //   height: 1000,
-    // },
-  };
-  const browser = await puppeteer.launch(browserOptions);
-  const page = await browser.newPage();
 
-  try {
-    await page.goto(
-      'https://accounts.spotify.com/authorize?' +
-        querystring.stringify({
-          response_type: 'code',
-          client_id: client_id,
-          scope: scope,
-          redirect_uri: redirect_uri,
-          state: state,
-        }),
-    );
+  // const browserOptions = {
+  //   // headless: true,
+  //   ignoreHTTPSErrors: true,
+  //   args: ['--no-sandbox', '--disable-setuid-sandbox'],
+  //   dumpio: true,
+  //   userAgent:
+  //     'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/65.0.3312.0 Safari/537.36',
+  //   // defaultViewport: {
+  //   //   width: 1600,
+  //   //   height: 1000,
+  //   // },
+  // };
+  // const browser = await puppeteer.launch(browserOptions);
+  // const page = await browser.newPage();
 
-    await page.type('input[name=username]', client_user);
-    await page.type('input[name=password]', client_password);
+  // try {
+  //   await page.goto(
+  //     'https://accounts.spotify.com/authorize?' +
+  //       querystring.stringify({
+  //         response_type: 'code',
+  //         client_id: client_id,
+  //         scope: scope,
+  //         redirect_uri: redirect_uri,
+  //         state: state,
+  //       }),
+  //   );
 
-    const submitButton = await page.$x('//*[@id="login-button"]');
-    await page.waitForTimeout(500);
-    await submitButton[0].click();
-    await page.waitForTimeout(1000);
+  //   await page.type('input[name=username]', client_user);
+  //   await page.type('input[name=password]', client_password);
 
-    const innerText = await page.evaluate(() => {
-      return JSON.parse(document.querySelector('body').innerText);
-    });
+  //   const submitButton = await page.$x('//*[@id="login-button"]');
+  //   await page.waitForTimeout(500);
+  //   await submitButton[0].click();
+  //   await page.waitForTimeout(1000);
 
-    console.log('innerText now contains the JSON');
-    console.log(innerText);
+  //   const innerText = await page.evaluate(() => {
+  //     return JSON.parse(document.querySelector('body').innerText);
+  //   });
 
-    await browser.close();
-    res.status(200).json(innerText);
-  } catch {
-    await browser.close();
-    res.status(500).json([]);
-  }
+  //   console.log('innerText now contains the JSON');
+  //   console.log(innerText);
+
+  //   await browser.close();
+  //   res.status(200).json(innerText);
+  // } catch {
+  //   await browser.close();
+  //   res.status(500).json([]);
+  // }
+
+  res.redirect(
+    'https://accounts.spotify.com/authorize?' +
+      querystring.stringify({
+        response_type: 'code',
+        client_id: client_id,
+        scope: scope,
+        redirect_uri: redirect_uri,
+        state: state,
+      }),
+  );
 });
 
 router.get('/callback', function (req, res) {
@@ -139,6 +151,7 @@ router.get('/callback', function (req, res) {
   const state = req.query.state || null;
   const storedState = req.cookies ? req.cookies[stateKey] : null;
 
+  console.log(code);
   console.log('here');
   if (false) {
     res.redirect(
@@ -170,10 +183,14 @@ router.get('/callback', function (req, res) {
       if (!error && response.statusCode === 200) {
         const access_token = body.access_token;
         const refresh_token = body.refresh_token;
+        console.log(refresh_token);
         console.log(access_token);
         const options = {
           url: 'https://api.spotify.com/v1/me/player/currently-playing',
-          headers: { Authorization: 'Bearer ' + access_token },
+          headers: {
+            Authorization:
+              'Bearer BQA9GhkMZumtjAtCt_WfTqRcRB5aAk-90NV6zg65gcu78oL_hLZCQ4lUrxG84Qx9f_wDLa2yg8cwV_ZG7ZvdXADsZcXim29V-J-WeMqwWxcC_cs7M9SCtBeKfXzfEPt_u3lheq8gsHBy-20MklSbG2xs979Klt6bNTC8',
+          },
           json: true,
         };
 
@@ -183,6 +200,11 @@ router.get('/callback', function (req, res) {
           res
             .status(200)
             .send(body ? spotifyService.formatCurrentSong(body) : []);
+
+          if (body) {
+          } else {
+            console.log('refreshing token');
+          }
         });
 
         // res.redirect(
