@@ -10,7 +10,7 @@ export const spotifyService = {
         duration: song.item.duration_ms,
         artist: song.item.album.artists[0].name,
         name: song.item.name,
-        images: song.item.album.images,
+        images: song.item.album.images.map((imgArr) => imgArr['url']),
       },
     ];
   },
