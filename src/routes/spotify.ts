@@ -14,16 +14,40 @@ const client_password = process.env.SPOTIFY_CLIENT_PASSWORD;
 const redirect_uri = process.env.SPOTIFY_REDIRECT_URL;
 
 const minutes = 45,
-  the_interval = minutes * 60 * 1000;
+  intervalLength = minutes * 60 * 1000;
 setInterval(function () {
-  console.log('interval time');
-  test();
-}, the_interval);
+  access_token = '';
+  refreshToken();
+}, intervalLength);
 
-var access_token = '';
-var refresh_token = '';
+let access_token = '';
+let refresh_token = '';
 
-async function test() {
+async function refreshToken() {
+  const authOptions = {
+    url: 'https://accounts.spotify.com/api/token',
+    headers: {
+      Authorization:
+        'Basic ' +
+        new Buffer(client_id + ':' + client_secret).toString('base64'),
+    },
+    form: {
+      grant_type: 'refresh_token',
+      refresh_token: refresh_token,
+    },
+    json: true,
+  };
+
+  request.post(authOptions, function (error, response, body) {
+    if (!error && response.statusCode === 200) {
+      console.log('refreshed token using refresh!');
+      refresh_token = body.refresh_token;
+      access_token = body.access_token;
+    }
+  });
+}
+
+async function getToken() {
   console.log('puppeteer incoming');
   const state = 'dkedkekdekdked';
   const scope = 'user-read-private user-read-email user-read-currently-playing';
@@ -69,7 +93,6 @@ async function test() {
   await browser.close();
 }
 
-// test();
 /**
  * Generates a random string containing numbers and letters
  * @param  {number} length The length of the string
@@ -89,59 +112,10 @@ const generateRandomString = function (length) {
 const stateKey = 'spotify_auth_state';
 
 router.get('/login', async function (req, res) {
+  console.log('/login called');
   const state = generateRandomString(16);
   res.cookie(stateKey, state);
   const scope = 'user-read-private user-read-email user-read-currently-playing';
-  console.log('before');
-
-  // const browserOptions = {
-  //   // headless: true,
-  //   ignoreHTTPSErrors: true,
-  //   args: ['--no-sandbox', '--disable-setuid-sandbox'],
-  //   dumpio: true,
-  //   userAgent:
-  //     'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/65.0.3312.0 Safari/537.36',
-  //   // defaultViewport: {
-  //   //   width: 1600,
-  //   //   height: 1000,
-  //   // },
-  // };
-  // const browser = await puppeteer.launch(browserOptions);
-  // const page = await browser.newPage();
-
-  // try {
-  //   await page.goto(
-  //     'https://accounts.spotify.com/authorize?' +
-  //       querystring.stringify({
-  //         response_type: 'code',
-  //         client_id: client_id,
-  //         scope: scope,
-  //         redirect_uri: redirect_uri,
-  //         state: state,
-  //       }),
-  //   );
-
-  //   await page.type('input[name=username]', client_user);
-  //   await page.type('input[name=password]', client_password);
-
-  //   const submitButton = await page.$x('//*[@id="login-button"]');
-  //   await page.waitForTimeout(500);
-  //   await submitButton[0].click();
-  //   await page.waitForTimeout(1000);
-
-  //   const innerText = await page.evaluate(() => {
-  //     return JSON.parse(document.querySelector('body').innerText);
-  //   });
-
-  //   console.log('innerText now contains the JSON');
-  //   console.log(innerText);
-
-  //   await browser.close();
-  //   res.status(200).json(innerText);
-  // } catch {
-  //   await browser.close();
-  //   res.status(500).json([]);
-  // }
 
   if (access_token) {
     console.log('access_token here');
@@ -201,19 +175,7 @@ router.get('/login', async function (req, res) {
       }
     });
   } else {
-    console.log('creating new token');
-    refresh_token = '';
-    test();
-    // res.redirect(
-    //   'https://accounts.spotify.com/authorize?' +
-    //     querystring.stringify({
-    //       response_type: 'code',
-    //       client_id: client_id,
-    //       scope: scope,
-    //       redirect_uri: redirect_uri,
-    //       state: state,
-    //     }),
-    // );
+    await getToken();
   }
 });
 
@@ -247,8 +209,6 @@ router.get('/callback', function (req, res) {
       },
       json: true,
     };
-
-    console.log('hi');
 
     request.post(authOptions, function (error, response, body) {
       console.log(error);
