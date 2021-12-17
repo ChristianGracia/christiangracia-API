@@ -218,7 +218,7 @@ router.get('/recently-played', async function (req, res) {
     console.log('access_token here');
     console.log(access_token);
     const options = {
-      url: 'https://api.spotify.com/v1/me/player/recently-played?limit=10',
+      url: 'https://api.spotify.com/v1/me/player/recently-played?limit=50',
       headers: {
         Authorization: 'Bearer ' + access_token,
       },
@@ -254,7 +254,7 @@ router.get('/recently-played', async function (req, res) {
             access_token = body.access_token;
 
             const options = {
-              url: 'https://api.spotify.com/v1/me/player/recently-played?limit=10',
+              url: 'https://api.spotify.com/v1/me/player/recently-played?limit=50',
               headers: {
                 Authorization: 'Bearer ' + access_token,
               },
