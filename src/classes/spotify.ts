@@ -36,7 +36,7 @@ export class Spotify {
 
     public setCode(code){
         this.code = code
-        console.info('----------------code set--------------------')
+        Logger.info('----------------code set--------------------')
     }
 
     puppeteerLogInAuth = async () => {
@@ -59,14 +59,13 @@ export class Spotify {
                         const state = 'dkedkekdekdked';
                         const scope = 'user-read-private user-read-email user-read-currently-playing user-read-recently-played';
                         const browserOptions = {
-                            headless: true,
+                            headless: false,
                             ignoreHTTPSErrors: true,
                             args: ['--no-sandbox', '--disable-setuid-sandbox'],
                             userAgent:
                             'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/65.0.3312.0 Safari/537.36',
                         };
                         const browser = await puppeteer.launch(browserOptions);
-                        console.log('2 xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx');
                         try {
                             const page = await browser.newPage();
                             await page.goto(
@@ -79,21 +78,27 @@ export class Spotify {
                                 state: state,
                                 }),
                             );
-                            console.log('3d xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx');
+                            console.log('scraper is waiting for username/password inputs');
                             await page.waitForTimeout(2000);
+                            console.log('inputs found1');
                             await page.type('input[name=username]', this.client_user);
+                            console.log('inputs found2');
                             await page.type('input[name=password]', this.client_password);
-                            await page.waitForTimeout(2000);
-                            console.log('3v xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx');
+                            console.log('inputs typed');
+                            await page.waitForTimeout(1000);
+                            console.log('inputs typed1');
+                            console.log('scraper is waiting for submit button');
                             const submitButton = await page.$x('//*[@id="login-button"]');
-                            await page.waitForTimeout(2000);
+                            console.log('scraper is waiting for submit button found');
+                            console.log('scraper is waiting for click');
+                            await page.waitForTimeout(1000);
+                            console.log('scraper is waiting for click1');
                             await submitButton[0].click();
-                            await page.waitForTimeout(2000);
-                            console.log('3yyyy xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx');
-                        //   const songData = await page.evaluate(() => {
-                        //     return JSON.parse(document.querySelector('body').innerText);
-                        //   });
+                            console.log('scraper is waiting for clicked2');
+                            await page.waitForTimeout(1000);
+                            console.log('scraper is waiting for clicked3');
                             await browser.close();
+                            console.log('closed');
                         } catch {
                             await browser.close();
                         }
@@ -102,20 +107,21 @@ export class Spotify {
                 })
             );
             await Promise.all(promises);
-
+            console.log('promise done');
             this.puppeteerRunning = false;
-            let counter = 0;
-            var interval = setInterval(() => {
-                if (this.puppeteerSuccess || counter > 5) {
-                    clearInterval(interval);
-                }
-                counter = counter + 1;
-            }, 1000);
-            this.setRefreshTokenInterval();
-            console.log(`counter: ${counter} ${counter} ${counter}`);
+            // let counter = 0;
+            // var interval = setInterval(() => {
+            //     if (this.puppeteerSuccess || counter > 2) {
+            //         clearInterval(interval);
+            //     }
+            //     counter = counter + 1;
+            // }, 1000);
+            // console.log(`counter: ${counter} ${counter} ${counter}`);
+            const email = await this.sendEmail('puppeteer script - code')
+            console.log('email done');
             return {
-                'access_token': this.access_token,
-                'email_sent': await this.sendEmail('puppeteer script'),
+                'code': this.code,
+                'email_sent': email,
             };
         } catch (err) {
             this.puppeteerRunning = false;
@@ -148,11 +154,13 @@ export class Spotify {
                     'Content-Type': 'application/x-www-form-urlencoded'
                 },
             })
-            .then((response) => {
+            .then(async (response) => {
                 if (response.status === 200) {
                     const { access_token,  refresh_token } = response.data;
                     this.setAccessToken(access_token, 'auth_code_flow')
                     this.setRefreshToken(refresh_token)
+                    await this.sendEmail('puppeteer script')
+                    this.setRefreshTokenInterval();
                     return { auth: true }
                 } else {
                     return {'Error': 'Error retrieving token '}; 
