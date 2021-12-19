@@ -2,7 +2,6 @@ import express, { Request, Response } from 'express';
 import { spotifyService } from '../services/spotify-service';
 import { Spotify } from '../classes/spotify';
 
-import * as path from 'path';
 
 const router = express.Router();
 
@@ -34,10 +33,6 @@ router.get('/callback', async function (req, res) {
 router.get('/refresh', async (req: Request, res: Response) => {
   const response = await spotify.refreshToken();
   res.status(200).send(response);
-});
-
-router.get('/', (req: Request, res: Response) => {
-  res.sendFile(path.join(__dirname, '../views/spotify.html'));
 });
 
 module.exports = router;

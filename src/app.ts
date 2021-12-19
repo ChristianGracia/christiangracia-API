@@ -63,6 +63,18 @@ router.get('/', (req: Request, res: Response) => {
   res.sendFile(path.join(__dirname + '/views/home.html'));
 });
 
+router.get('/spotify', (req: Request, res: Response) => {
+  res.sendFile(path.join(__dirname + '/views/spotify.html'));
+});
+
+router.get('/email', (req: Request, res: Response) => {
+  res.sendFile(path.join(__dirname + '/views/email.html'));
+});
+
+router.get('/github', (req: Request, res: Response) => {
+  res.sendFile(path.join(__dirname + '/views/github.html'));
+});
+
 const githubController = require('./routes/github');
 app.use('/github', githubController);
 

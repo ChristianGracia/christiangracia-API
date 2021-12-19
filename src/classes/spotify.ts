@@ -39,6 +39,7 @@ export class Spotify {
             return {'Error': 'Missing client id or client secret'};
         }
         if (this.puppeteerRunning) {
+            console.log('zzzzzzzzzzzzzzzzzzzzzzzz Bot already running zzzzzzzzzzzzzzzzzzzzzz')
             return {'Error': 'Bot already running'};
         } else {
             this.puppeteerRunning = true;
@@ -81,7 +82,7 @@ export class Spotify {
                             const submitButton = await page.$x('//*[@id="login-button"]');
                             await page.waitForTimeout(1000);
                             await submitButton[0].click();
-                            await page.waitForTimeout(1000);
+                            await page.waitForTimeout(4000);
                         
                         //   const songData = await page.evaluate(() => {
                         //     return JSON.parse(document.querySelector('body').innerText);
