@@ -21,7 +21,10 @@ export class Spotify {
         this.client_user = client_user
         this.client_password = client_password
         this.redirect_uri = redirect_uri
-        this.puppeteerLogInAuth();
+        
+        if (!this.puppeteerRunning) {
+            this.puppeteerLogInAuth();
+        }
     }
 
     private setAccessToken(token, method = ''){
@@ -36,8 +39,8 @@ export class Spotify {
     }
 
     public setCode(code){
-        this.code = code
-        Logger.info('----------------code set--------------------')
+        this.code = code;
+        Logger.info('----------------code set--------------------');
     }
 
     puppeteerLogInAuth = async () => {
@@ -80,16 +83,27 @@ export class Spotify {
                                 }),
                             );
                             await page.waitForTimeout(2000)
+                            console.log('input1 xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx');
                             await page.$('input[name=username]');
+                            console.log('input1 found xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx');
                             await page.type('input[name=username]', this.client_user);
+                            console.log('input1 typed xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx');
                             await page.$('input[name=password]');
+                            console.log('input2 found xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx');
                             await page.type('input[name=password]', this.client_password);
+                            console.log('input2 typed xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx');
                             await page.waitForTimeout(1000);
+                            console.log('submit looking xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx');
                             const submitButton = await page.$x('//*[@id="login-button"]');
+                            console.log('submit found xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx');
                             await page.waitForTimeout(3000);
+                            console.log('button found xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx');
                             await submitButton[0].click();
+                            console.log('button clicked xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx');
                             await page.waitForTimeout(3000);
+                            console.log('aiwaiting close xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx');
                             await browser.close();
+                            console.log('close xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx');
                         } catch {
                             await browser.close();
                         }
@@ -107,10 +121,9 @@ export class Spotify {
             //     counter = counter + 1;
             // }, 1000);
             // console.log(`counter: ${counter} ${counter} ${counter}`);
-            const email = await this.sendEmail('puppeteer script - code')
+            await this.sendEmail('puppeteer script - code')
             return {
                 'code': this.code,
-                'email_sent': email,
             };
         } catch (err) {
             this.puppeteerRunning = false;
