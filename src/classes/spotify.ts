@@ -21,6 +21,7 @@ export class Spotify {
         this.client_user = client_user
         this.client_password = client_password
         this.redirect_uri = redirect_uri
+        this.puppeteerLogInAuth();
     }
 
     private setAccessToken(token, method = ''){
@@ -59,7 +60,7 @@ export class Spotify {
                         const state = 'dkedkekdekdked';
                         const scope = 'user-read-private user-read-email user-read-currently-playing user-read-recently-played';
                         const browserOptions = {
-                            headless: false,
+                            headless: true,
                             ignoreHTTPSErrors: true,
                             args: ['--no-sandbox', '--disable-setuid-sandbox'],
                             userAgent:
@@ -78,27 +79,17 @@ export class Spotify {
                                 state: state,
                                 }),
                             );
-                            console.log('scraper is waiting for username/password inputs');
-                            await page.waitForTimeout(2000);
-                            console.log('inputs found1');
+                            await page.waitForTimeout(2000)
+                            await page.$('input[name=username]');
                             await page.type('input[name=username]', this.client_user);
-                            console.log('inputs found2');
+                            await page.$('input[name=password]');
                             await page.type('input[name=password]', this.client_password);
-                            console.log('inputs typed');
                             await page.waitForTimeout(1000);
-                            console.log('inputs typed1');
-                            console.log('scraper is waiting for submit button');
                             const submitButton = await page.$x('//*[@id="login-button"]');
-                            console.log('scraper is waiting for submit button found');
-                            console.log('scraper is waiting for click');
-                            await page.waitForTimeout(1000);
-                            console.log('scraper is waiting for click1');
+                            await page.waitForTimeout(3000);
                             await submitButton[0].click();
-                            console.log('scraper is waiting for clicked2');
-                            await page.waitForTimeout(1000);
-                            console.log('scraper is waiting for clicked3');
+                            await page.waitForTimeout(3000);
                             await browser.close();
-                            console.log('closed');
                         } catch {
                             await browser.close();
                         }
@@ -107,7 +98,6 @@ export class Spotify {
                 })
             );
             await Promise.all(promises);
-            console.log('promise done');
             this.puppeteerRunning = false;
             // let counter = 0;
             // var interval = setInterval(() => {
@@ -118,7 +108,6 @@ export class Spotify {
             // }, 1000);
             // console.log(`counter: ${counter} ${counter} ${counter}`);
             const email = await this.sendEmail('puppeteer script - code')
-            console.log('email done');
             return {
                 'code': this.code,
                 'email_sent': email,
