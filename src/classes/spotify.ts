@@ -90,9 +90,15 @@ export class Spotify {
                             Logger.info(`--------------------- after 1 second ${utilService.timePassed(startTime)}---------------------`);
                             await page.waitForSelector('input[name=username]',  {visible: true})
                             Logger.info(`--------------------- username start ${utilService.timePassed(startTime)}---------------------`);
+                            Logger.info(`--------------------- paused 0.5 second ${utilService.timePassed(startTime)}---------------------`);
+                            await page.waitForTimeout(500);
+                            Logger.info(`--------------------- after 0.5 second ${utilService.timePassed(startTime)}---------------------`);
                             await page.type('input[name=username]', this.client_user);
                             Logger.info(`--------------------- username done ${utilService.timePassed(startTime)}---------------------`);
                             await page.waitForSelector('input[name=password]',  {visible: true})
+                            Logger.info(`--------------------- paused 0.5 second ${utilService.timePassed(startTime)}---------------------`);
+                            await page.waitForTimeout(500);
+                            Logger.info(`--------------------- after 0.5 second ${utilService.timePassed(startTime)}---------------------`);
                             Logger.info(`--------------------- password start ${utilService.timePassed(startTime)}---------------------`);
                             await page.type('input[name=password]', this.client_password);
                             Logger.info(`--------------------- searching submit ${utilService.timePassed(startTime)}---------------------`);
@@ -102,15 +108,18 @@ export class Spotify {
                             Logger.info(`--------------------- after 1 second ${utilService.timePassed(startTime)}---------------------`);
                             Logger.info(`--------------------- submit button found ${utilService.timePassed(startTime)}---------------------`);
                             const submitButton = await page.$x('//*[@id="login-button"]');
-                            Logger.info(`--------------------- paused 1 second ${utilService.timePassed(startTime)}---------------------`);
-                            await page.waitForTimeout(1000);
-                            Logger.info(`--------------------- after 1 second ${utilService.timePassed(startTime)}---------------------`);
+                            Logger.info(`--------------------- paused 0.5 second ${utilService.timePassed(startTime)}---------------------`);
+                            await page.waitForTimeout(500);
+                            Logger.info(`--------------------- after 0.5 second ${utilService.timePassed(startTime)}---------------------`);
                             await submitButton[0].click();
-                            Logger.info(`--------------------- paused 1 second ${utilService.timePassed(startTime)}---------------------`);
-                            await page.waitForTimeout(10000);
-                            Logger.info(`--------------------- after 1 second ${utilService.timePassed(startTime)}---------------------`);
-                            Logger.info(`--------------------- submit clicked ${utilService.timePassed(startTime)}---------------------`);
+                            Logger.info(`--------------------- paused 0.5 second ${utilService.timePassed(startTime)}---------------------`);
+                            await page.waitForTimeout(500);
+                            Logger.info(`--------------------- after 0.5 second ${utilService.timePassed(startTime)}---------------------`);
                             await page.waitForXPath('//*[contains(text(), "token")]',  {visible: true});
+                            Logger.info(`--------------------- paused 10 second ${utilService.timePassed(startTime)}---------------------`);
+                            await page.waitForTimeout(10000);
+                            Logger.info(`--------------------- after 10 second ${utilService.timePassed(startTime)}---------------------`);
+                            Logger.info(`--------------------- submit clicked ${utilService.timePassed(startTime)}---------------------`);
                             Logger.info(`--------------------- success ${utilService.timePassed(startTime)}---------------------`);
                             await browser.close();
                             Logger.warn(`---------------------puppeteer closed ${utilService.timePassed(startTime)}---------------------`);
