@@ -1,6 +1,7 @@
 const axios = require('axios');
 import puppeteer from 'puppeteer';
 import querystring from 'querystring';
+import Logger from '../config/winston';
 
 export class Spotify {
     public access_token: string = '';
@@ -24,7 +25,7 @@ export class Spotify {
 
     private setAccessToken(token, method = ''){
         this.access_token = token
-        console.log(`Access Token Set | method: ${method} XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX`)
+        Logger.info(`---------------------Access Token Set | method: ${method}---------------------`);
         if (method === 'auth_code_flow') {
             this.puppeteerSuccess = true;
         }
@@ -47,6 +48,7 @@ export class Spotify {
             promises.push(
                 new Promise(resolve => {
                     (async () => {
+                        Logger.info('---------------------puppeteer starting---------------------');
                         console.log('puppeteer incoming xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx');
                         const state = 'dkedkekdekdked';
                         const scope = 'user-read-private user-read-email user-read-currently-playing user-read-recently-played';
@@ -125,7 +127,7 @@ export class Spotify {
                 grant_type: 'authorization_code',
             }
 
-            console.log('xxxxxxxxxxxxxxx    Getting Token  xxxxxxxxxxxxxxxxxx');
+            Logger.info('---------------------Getting token with code---------------------');
             return axios({
                 url: 'https://accounts.spotify.com/api/token',
                 method: 'post',
@@ -231,7 +233,7 @@ export class Spotify {
         .then(async (response) => {
             if (response.status === 200) {
                 const { access_token, } = response.data;
-                console.log('XXXXXXXXXXXXXX   Token refreshed XXXXXXXXXXXXXXXXX')
+                Logger.info('---------------------Token refreshed ---------------------');
                 console.log(response.data);
                 this.setAccessToken(access_token, 'refresh_token');
                 this.setRefreshTokenInterval();
@@ -254,6 +256,7 @@ export class Spotify {
         }, 60 * 1000 * 30)
     }
     handleTokenError = async () => {
+        Logger.error('---------------------RESETTING TOKEN ---------------------');
         this.access_token = '';
         const promises = [];
         promises.push(
