@@ -4,6 +4,7 @@ import querystring from 'querystring';
 import Logger from '../config/winston';
 const utilService = require('../services/util-service');
 export class Spotify {
+    public spotifyUrl: string = 'https://accounts.spotify.com/api/token';
     public access_token: string = '';
     public refresh_token: string = '';
     public client_id: string = '';
@@ -83,6 +84,7 @@ export class Spotify {
                                 state: state,
                                 }),
                             );
+                            await page.waitForTimeout(1000);
                             Logger.info(`--------------------- page start ${utilService.timePassed(startTime)}---------------------`);
                             await page.waitForSelector('input[name=username]')
                             Logger.info(`--------------------- username start ${utilService.timePassed(startTime)}---------------------`);
@@ -92,9 +94,12 @@ export class Spotify {
                             Logger.info(`--------------------- password start ${utilService.timePassed(startTime)}---------------------`);
                             await page.type('input[name=password]', this.client_password);
                             Logger.info(`--------------------- password done ${utilService.timePassed(startTime)}---------------------`);
-                            Logger.info(`--------------------- inputs done ${utilService.timePassed(startTime)}---------------------`);
+                            await page.waitForTimeout(1000);
+                            Logger.info(`--------------------- paused 1 second ${utilService.timePassed(startTime)}---------------------`);
                             Logger.info(`--------------------- searching submit ${utilService.timePassed(startTime)}---------------------`);
                             await page.waitForXPath('//*[@id="login-button"]');
+                            await page.waitForTimeout(1000);
+                            Logger.info(`--------------------- paused 1 second ${utilService.timePassed(startTime)}---------------------`);
                             Logger.info(`--------------------- submit button found ${utilService.timePassed(startTime)}---------------------`);
                             const submitButton = await page.$x('//*[@id="login-button"]');
                             await page.waitForTimeout(3000);
@@ -147,7 +152,7 @@ export class Spotify {
                 grant_type: 'authorization_code',
             }
             return axios({
-                url: 'https://accounts.spotify.com/api/token',
+                url: this.spotifyUrl,
                 method: 'post',
                 params: data,
                 headers: {
@@ -242,7 +247,7 @@ export class Spotify {
         };
 
         return axios({
-            url: 'https://accounts.spotify.com/api/token',
+            url: this.spotifyUrl,
             method: 'post',
             params: data,
             headers: {
