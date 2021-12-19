@@ -75,7 +75,7 @@ export class Spotify {
                                 }),
                             );
                             console.log('3d xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx');
-                            await page.waitForTimeout(3000);
+                            await page.waitForTimeout(10000);
                             await page.type('input[name=username]', this.client_user);
                             await page.type('input[name=password]', this.client_password);
                             console.log('3v xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx');
