@@ -12,6 +12,7 @@ export class Spotify {
     public client_user: string = '';
     public puppeteerRunning: boolean = false;
     public puppeteerSuccess: boolean = false;
+    public refreshInterval: any;
 
     constructor(client_id, client_secret, client_user, client_password, redirect_uri) {
         this.client_id = client_id
@@ -101,7 +102,7 @@ export class Spotify {
                 }
                 counter = counter + 1;
             }, 1000);
-
+            this.setRefreshTokenInterval();
             return {
                 'access_token': this.access_token,
                 'email_sent': await this.sendEmail('puppeteer script'),
@@ -142,7 +143,7 @@ export class Spotify {
                     const { access_token,  refresh_token } = response.data;
                     this.setAccessToken(access_token, 'auth_code_flow')
                     this.setRefreshToken(refresh_token)
-                    return { auth: true}
+                    return { auth: true }
                 } else {
                     return {'Error': 'Error retrieving token '}; 
                 }    
@@ -173,19 +174,9 @@ export class Spotify {
         }
     }
     getCurrentlyPlaying = async () => {
-        console.log(this.access_token)
         if (this.access_token === '') {
             console.log('server started, no token found');
-            const promises = [];
-            promises.push(
-                new Promise(resolve => {
-                    (async () => {
-                        await this.puppeteerLogInAuth()
-                        resolve(true);
-                    })();
-                })
-            );
-            await Promise.all(promises);
+            await this.handleTokenError();
         }
 
         return await axios({
@@ -199,19 +190,9 @@ export class Spotify {
         })
     }
     getRecentlyPlayed  = async () => { 
-        console.log(this.access_token)
         if (this.access_token === '') {
             console.log('server started, no token found');
-            const promises = [];
-            promises.push(
-                new Promise(resolve => {
-                    (async () => {
-                        await this.puppeteerLogInAuth()
-                        resolve(true);
-                    })();
-                })
-            );
-            await Promise.all(promises);
+            await this.handleTokenError();
         }
 
         return await axios({
@@ -229,10 +210,12 @@ export class Spotify {
         if (!this.refreshToken) {
             return {'Error': 'Missing refresh token'};
         }
+
         const data = {
             grant_type: 'refresh_token',
             refresh_token: this.refresh_token,
         };
+        console.log('second refresh')
 
         return axios({
             url: 'https://accounts.spotify.com/api/token',
@@ -246,20 +229,44 @@ export class Spotify {
                 'Content-Type': 'application/x-www-form-urlencoded'
             },
         })
-        .then((response) => {
+        .then(async (response) => {
             if (response.status === 200) {
-                const { access_token,  refresh_token } = response.data;
+                const { access_token, } = response.data;
                 console.log('XXXXXXXXXXXXXX   Token refreshed XXXXXXXXXXXXXXXXX')
                 console.log(response.data);
                 this.setAccessToken(access_token, 'refresh_token');
-                this.setRefreshToken(refresh_token)
-                return { auth: true}
+                this.setRefreshTokenInterval();
+                return { auth: true, 'email_sent': await this.sendEmail('refresh token')}
             } else {
-                return {'Error': 'Error refreshing token '}; 
+                await this.handleTokenError();
+                return {};
             }    
         })
-        .catch((error) => {
+        .catch(async (error) => {
+            await this.handleTokenError();
             return { error }
         });
+    }
+
+    setRefreshTokenInterval = async () => {
+        setTimeout(() => {
+            this.access_token = '';
+            this.refresh_token = 'dededed';
+            this.refreshToken();
+        }, 45 * 1000 * 30)
+    }
+    handleTokenError = async () => {
+        this.access_token = '';
+        const promises = [];
+        promises.push(
+            new Promise(resolve => {
+                (async () => {
+                    await this.puppeteerLogInAuth()
+                    resolve(true);
+                })();
+            })
+        );
+        await Promise.all(promises);
+        return {'Error': 'Token error - will relogin'}; 
     }
 }
