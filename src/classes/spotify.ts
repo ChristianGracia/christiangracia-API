@@ -3,15 +3,15 @@ import puppeteer from 'puppeteer';
 import querystring from 'querystring';
 
 export class Spotify {
-    access_token: string = '';
-    refresh_token: string = '';
-    client_id: string = '';
-    client_secret: string = '';
-    client_password: string = '';
-    redirect_uri: string = '';
-    client_user: string = '';
-    public puppeteerLogInRan: boolean = false;
+    public access_token: string = '';
+    public refresh_token: string = '';
+    public client_id: string = '';
+    public client_secret: string = '';
+    public client_password: string = '';
+    public redirect_uri: string = '';
+    public client_user: string = '';
     public puppeteerRunning: boolean = false;
+    public puppeteerSuccess: boolean = false;
 
     constructor(client_id, client_secret, client_user, client_password, redirect_uri) {
         this.client_id = client_id
@@ -23,7 +23,10 @@ export class Spotify {
 
     private setAccessToken(token, method = ''){
         this.access_token = token
-        console.log(`Access Token Set | method: ${method}`)
+        console.log(`Access Token Set | method: ${method} XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX`)
+        if (method === 'auth_code_flow') {
+            this.puppeteerSuccess = true;
+        }
     }
     private setRefreshToken(token){
         this.refresh_token = token
@@ -80,32 +83,6 @@ export class Spotify {
                         //   const songData = await page.evaluate(() => {
                         //     return JSON.parse(document.querySelector('body').innerText);
                         //   });
-                            this.puppeteerLogInRan = true;
-                            console.log('puppetter ran is now true')
-                        
-                        //   const emailOptions = {
-                        //     url: 'https://christiangracia-api.herokuapp.com/email/job-ran',
-                        //     body: {
-                        //       jobType: 'puppeteer script',
-                        //       message: 'puppeteer script ran',
-                        //     },
-                        //   };
-                        
-                        //   axios.post(emailOptions, function (error, response, body) {
-                        //     console.error('error:', error);
-                        //     console.log('statusCode:', response && response.statusCode);
-                        //     console.log('body:', body);
-                        //   });
-
-                        // await axios.post('https://christiangracia-api.herokuapp.com/email/job-ran', emailOptions);
-                        //   if (res.status === 200) {
-                        //       console.log(res);
-                        //       return res;
-                        //   } else {
-                        //       console.log(res);
-                        //       return {'Error': 'Error retrieving token '}; 
-                        //   }
-                        // console.log('email sent');
                         await browser.close();
                         } catch {
                             await browser.close();
@@ -115,39 +92,39 @@ export class Spotify {
                 })
             );
             await Promise.all(promises);
-            console.log('promsies ran')
-            this.puppeteerRunning = false;
-            return true;
 
+            this.puppeteerRunning = false;
+            let counter = 0;
+            var interval = setInterval(() => {
+                if (this.puppeteerSuccess || counter > 5) {
+                    clearInterval(interval);
+                }
+                counter = counter + 1;
+            }, 1000);
+
+            return {
+                'access_token': this.access_token,
+                'email_sent': await this.sendEmail('puppeteer script'),
+            };
         } catch (err) {
             this.puppeteerRunning = false;
-            return true;
+            return {};
         }
     }
 
     useAuthCodeToken = async (code) => {
-        console.log('hiiii')
-        // if (!this.puppeteerLogInRan) {
-        //     console.log('Puppeteer Login Auth Code flow not ran');
-        //     return {'Error': 'Puppeteer Login Auth Code flow not ran'};
-        // }
+        if (!code) {
+            console.log('Puppeteer Login Auth Code flow not ran');
+            return {'Error': 'Puppeteer Login Auth Code flow not ran'};
+        }
         try {
             const data = {
                 code: code,
                 redirect_uri: this.redirect_uri,
                 grant_type: 'authorization_code',
             }
-            const authOptions = {
-                headers: {
-                  Authorization:
-                    'Basic ' +
-                    new Buffer(this.client_id + ':' + this.client_secret).toString('base64'),
-                    Accept: "application/json",
-                    'Content-Type': 'application/json',
-                },
-            };
 
-            console.log('xxxxxxxxxxxxxxx    Getting Token xxxxxxxxxxxxxxxxxx');
+            console.log('xxxxxxxxxxxxxxx    Getting Token  xxxxxxxxxxxxxxxxxx');
             return axios({
                 url: 'https://accounts.spotify.com/api/token',
                 method: 'post',
@@ -167,15 +144,32 @@ export class Spotify {
                     this.setRefreshToken(refresh_token)
                     return { auth: true}
                 } else {
-                    console.log('fail')
                     return {'Error': 'Error retrieving token '}; 
                 }    
             })
             .catch((error) => {
-                return error
+                return { error }
             });
         } catch (err) {
             return {'Error': 'Error retrieving token using authorization code'}; 
+        }
+    }
+    sendEmail = async (jobType) => {
+        const body = {
+              jobType: `${jobType}`,
+              message: `${jobType} ran`
+          };
+
+        const res = await axios({
+                url: 'https://christiangracia-api.herokuapp.com/email/job-ran',
+                method: 'post',
+                params: body,
+        });
+        if (res.status === 200) {
+            console.log(`${jobType} email sent XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX`)
+            return res.data;
+        } else {
+            return {'Error': 'Error sending email '}; 
         }
     }
 }

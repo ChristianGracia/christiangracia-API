@@ -283,12 +283,9 @@ router.get('/recently-played', async function (req, res) {
 
 router.get('/callback', async function (req, res) {
   const code = req.query.code;
-
   console.log('code received ' + code);
   console.log('callback ran');
   const tokens = await spotify.useAuthCodeToken(code)
-  console.log('received')
-  // console.log(tokens);
   res.status(200).json({});
 
   //   const authOptions = {
@@ -335,8 +332,7 @@ router.get('/callback', async function (req, res) {
 });
 
 router.get('/test', async function (req, res) {
-  await spotify.puppeteerLogInAuth();
-  //res.send(await spotify.puppeteerLogInAuth());
+  res.send(await spotify.puppeteerLogInAuth());
 });
 
 router.get('/', (req: Request, res: Response) => {
