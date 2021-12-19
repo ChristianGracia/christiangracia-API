@@ -2,6 +2,7 @@ import express, { Request, Response } from 'express';
 import request from 'request';
 import querystring from 'querystring';
 import { spotifyService } from '../services/spotify-service';
+import { Spotify } from '../classes/spotify';
 
 import * as path from 'path';
 import puppeteer from 'puppeteer';
@@ -14,7 +15,9 @@ const client_user = process.env.SPOTIFY_CLIENT_USER;
 const client_password = process.env.SPOTIFY_CLIENT_PASSWORD;
 const redirect_uri = process.env.SPOTIFY_REDIRECT_URL;
 
-const minutes = 45,
+const spotify = new Spotify(client_id, client_secret , client_user, client_password, redirect_uri);
+
+const minutes = 30,
   intervalLength = minutes * 60 * 1000;
 setInterval(function () {
   access_token = '';
@@ -62,10 +65,10 @@ async function refreshToken() {
   });
 }
 
-getToken();
+// getToken();
 
 async function getToken() {
-  console.log('puppeteer incoming');
+  console.log('puppeteer incoming xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx');
   const state = 'dkedkekdekdked';
   const scope = 'user-read-private user-read-email user-read-currently-playing user-read-recently-played';
   const browserOptions = {
@@ -278,79 +281,56 @@ router.get('/recently-played', async function (req, res) {
 });
 
 
-router.get('/callback', function (req, res) {
-  const code = req.query.code || null;
-  const state = req.query.state || null;
-  const storedState = req.cookies ? req.cookies[stateKey] : null;
+router.get('/callback', async function (req, res) {
+  const code = req.query.code;
 
-  console.log(code);
-  console.log('here');
-  if (false) {
-    res.redirect(
-      '/#' +
-        querystring.stringify({
-          error: 'state_mismatch',
-        }),
-    );
-  } else {
-    res.clearCookie(stateKey);
-    const authOptions = {
-      url: 'https://accounts.spotify.com/api/token',
-      form: {
-        code: code,
-        redirect_uri: redirect_uri,
-        grant_type: 'authorization_code',
-      },
-      headers: {
-        Authorization:
-          'Basic ' +
-          new Buffer(client_id + ':' + client_secret).toString('base64'),
-      },
-      json: true,
-    };
+  console.log('code received ' + code);
+  console.log('callback ran');
+  setTimeout(async () => {
+    res.send(await spotify.useAuthCodeToken(code));
+  }, 2000)
 
-    request.post(authOptions, function (error, response, body) {
-      console.log(error);
-      console.log(body);
-      if (!error && response.statusCode === 200) {
-        access_token = body.access_token;
-        refresh_token = body.refresh_token;
-        console.log('new access token');
-        console.log(access_token);
-        console.log('new refresh_token');
-        console.log(refresh_token);
-        const options = {
-          url: 'https://api.spotify.com/v1/me/player/currently-playing',
-          headers: {
-            Authorization: 'Bearer ' + access_token,
-          },
-          json: true,
-        };
+  //   const authOptions = {
+  //     url: 'https://accounts.spotify.com/api/token',
+  //     form: {
+  //       code: code,
+  //       redirect_uri: redirect_uri,
+  //       grant_type: 'authorization_code',
+  //     },
+  //     headers: {
+  //       Authorization:
+  //         'Basic ' +
+  //         new Buffer(client_id + ':' + client_secret).toString('base64'),
+  //     },
+  //     json: true,
+  //   };
 
-        request.get(options, function (error, response, body) {
-          console.log(error);
-          res
-            .status(200)
-            .send(body ? spotifyService.formatCurrentSong(body) : []);
-        });
+  //   request.post(authOptions, function (error, response, body) {
+  //     console.log(error);
+  //     console.log(body);
+  //     if (!error && response.statusCode === 200) {
+  //       access_token = body.access_token;
+  //       refresh_token = body.refresh_token;
+  //       console.log('new access token');
+  //       console.log(access_token);
+  //       console.log('new refresh_token');
+  //       console.log(refresh_token);
+  //       const options = {
+  //         url: 'https://api.spotify.com/v1/me/player/currently-playing',
+  //         headers: {
+  //           Authorization: 'Bearer ' + access_token,
+  //         },
+  //         json: true,
+  //       };
 
-        // res.redirect(
-        //   '/#' +
-        //     querystring.stringify({
-        //       access_token: access_token,
-        //       refresh_token: refresh_token,
-        //     }),
-        // );
-      } else {
-        res.redirect(
-          '/#' +
-            querystring.stringify({
-              error: 'invalid_token',
-            }),
-        );
-      }
-    });
-  }
+  //       request.get(options, function (error, response, body) {
+  //         console.log(error);
+  //         res
+  //           .status(200)
+  //           .send(body ? spotifyService.formatCurrentSong(body) : []);
+  //       });
+  //     }
+  //   });
 });
 
 router.get('/refresh_token', function (req, res) {
@@ -377,6 +357,10 @@ router.get('/refresh_token', function (req, res) {
       });
     }
   });
+});
+
+router.get('/test', function (req, res) {
+  return spotify.puppeteerLogInAuth();
 });
 
 router.get('/', (req: Request, res: Response) => {
