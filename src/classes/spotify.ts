@@ -13,7 +13,6 @@ export class Spotify {
     public client_user: string = '';
     public puppeteerRunning: boolean = false;
     public puppeteerSuccess: boolean = false;
-    public refreshInterval: any;
 
     constructor(client_id, client_secret, client_user, client_password, redirect_uri) {
         this.client_id = client_id
@@ -62,7 +61,7 @@ export class Spotify {
                             'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/65.0.3312.0 Safari/537.36',
                         };
                         const browser = await puppeteer.launch(browserOptions);
-                        
+                        console.log('2 xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx');
                         try {
                             const page = await browser.newPage();
                             await page.goto(
@@ -83,11 +82,11 @@ export class Spotify {
                             await page.waitForTimeout(1000);
                             await submitButton[0].click();
                             await page.waitForTimeout(5000);
-                        
+                            console.log('3 xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx');
                         //   const songData = await page.evaluate(() => {
                         //     return JSON.parse(document.querySelector('body').innerText);
                         //   });
-                        await browser.close();
+                            await browser.close();
                         } catch {
                             await browser.close();
                         }
@@ -106,6 +105,7 @@ export class Spotify {
                 counter = counter + 1;
             }, 1000);
             this.setRefreshTokenInterval();
+            console.log('4 xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx');
             return {
                 'access_token': this.access_token,
                 'email_sent': await this.sendEmail('puppeteer script'),
