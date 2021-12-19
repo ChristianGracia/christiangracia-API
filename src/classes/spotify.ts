@@ -53,7 +53,7 @@ export class Spotify {
                         const state = 'dkedkekdekdked';
                         const scope = 'user-read-private user-read-email user-read-currently-playing user-read-recently-played';
                         const browserOptions = {
-                            headless: true,
+                            headless: false,
                             ignoreHTTPSErrors: true,
                             args: ['--no-sandbox', '--disable-setuid-sandbox'],
                             dumpio: true,
@@ -75,14 +75,15 @@ export class Spotify {
                                 }),
                             );
                             console.log('3d xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx');
-                            await page.waitForTimeout(10000);
+                            await page.waitForTimeout(2000);
                             await page.type('input[name=username]', this.client_user);
                             await page.type('input[name=password]', this.client_password);
+                            await page.waitForTimeout(2000);
                             console.log('3v xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx');
                             const submitButton = await page.$x('//*[@id="login-button"]');
-                            await page.waitForTimeout(5000);
+                            await page.waitForTimeout(2000);
                             await submitButton[0].click();
-                            await page.waitForTimeout(8000);
+                            await page.waitForTimeout(2000);
                             console.log('3yyyy xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx');
                         //   const songData = await page.evaluate(() => {
                         //     return JSON.parse(document.querySelector('body').innerText);
