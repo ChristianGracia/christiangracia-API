@@ -85,6 +85,9 @@ export class Spotify {
                                 }), {waitUntil: 'networkidle2'}
                             );
                             Logger.info(`--------------------- page start ${utilService.timePassed(startTime)}---------------------`);
+                            Logger.info(`--------------------- paused 3 second ${utilService.timePassed(startTime)}---------------------`);
+                            await page.waitForTimeout(3000);
+                            Logger.info(`--------------------- after 3 second ${utilService.timePassed(startTime)}---------------------`);
                             await page.waitForSelector('input[name=username]',  {visible: true})
                             Logger.info(`--------------------- username start ${utilService.timePassed(startTime)}---------------------`);
                             await page.type('input[name=username]', this.client_user);
@@ -93,12 +96,23 @@ export class Spotify {
                             Logger.info(`--------------------- password start ${utilService.timePassed(startTime)}---------------------`);
                             await page.type('input[name=password]', this.client_password);
                             Logger.info(`--------------------- password done ${utilService.timePassed(startTime)}---------------------`);
+                            Logger.info(`--------------------- paused 1 second ${utilService.timePassed(startTime)}---------------------`);
+                            await page.waitForTimeout(1000);
+                            Logger.info(`--------------------- after 1 second ${utilService.timePassed(startTime)}---------------------`);
                             Logger.info(`--------------------- searching submit ${utilService.timePassed(startTime)}---------------------`);
                             await page.waitForXPath('//*[@id="login-button"]',  {visible: true});
                             Logger.info(`--------------------- paused 1 second ${utilService.timePassed(startTime)}---------------------`);
+                            await page.waitForTimeout(1000);
+                            Logger.info(`--------------------- after 1 second ${utilService.timePassed(startTime)}---------------------`);
                             Logger.info(`--------------------- submit button found ${utilService.timePassed(startTime)}---------------------`);
                             const submitButton = await page.$x('//*[@id="login-button"]');
+                            Logger.info(`--------------------- paused 1 second ${utilService.timePassed(startTime)}---------------------`);
+                            await page.waitForTimeout(1000);
+                            Logger.info(`--------------------- after 1 second ${utilService.timePassed(startTime)}---------------------`);
                             await submitButton[0].click();
+                            Logger.info(`--------------------- paused 1 second ${utilService.timePassed(startTime)}---------------------`);
+                            await page.waitForTimeout(1000);
+                            Logger.info(`--------------------- after 1 second ${utilService.timePassed(startTime)}---------------------`);
                             Logger.info(`--------------------- submit clicked ${utilService.timePassed(startTime)}---------------------`);
                             await page.waitForXPath('//*[contains(text(), "token")]',  {visible: true});
                             Logger.info(`--------------------- success ${utilService.timePassed(startTime)}---------------------`);
