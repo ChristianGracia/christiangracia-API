@@ -115,10 +115,10 @@ export class Spotify {
                             Logger.info(`--------------------- paused 0.5 second ${utilService.timePassed(startTime)}---------------------`);
                             await page.waitForTimeout(500);
                             Logger.info(`--------------------- after 0.5 second ${utilService.timePassed(startTime)}---------------------`);
+                            Logger.info(`--------------------- paused 12 second ${utilService.timePassed(startTime)}---------------------`);
+                            await page.waitForTimeout(12000);
+                            Logger.info(`--------------------- after 12 second ${utilService.timePassed(startTime)}---------------------`);
                             await page.waitForXPath('//*[contains(text(), "token")]',  {visible: true});
-                            Logger.info(`--------------------- paused 10 second ${utilService.timePassed(startTime)}---------------------`);
-                            await page.waitForTimeout(10000);
-                            Logger.info(`--------------------- after 10 second ${utilService.timePassed(startTime)}---------------------`);
                             Logger.info(`--------------------- submit clicked ${utilService.timePassed(startTime)}---------------------`);
                             Logger.info(`--------------------- success ${utilService.timePassed(startTime)}---------------------`);
                             await browser.close();
