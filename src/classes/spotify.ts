@@ -55,7 +55,7 @@ export class Spotify {
                         const state = 'dkedkekdekdked';
                         const scope = 'user-read-private user-read-email user-read-currently-playing user-read-recently-played';
                         const browserOptions = {
-                            headless: false,
+                            headless: true,
                             ignoreHTTPSErrors: true,
                             args: ['--no-sandbox', '--disable-setuid-sandbox'],
                             dumpio: true,
@@ -77,18 +77,19 @@ export class Spotify {
                                 }),
                             );
                             await page.waitForTimeout(2000);
+                            Logger.info(`--------------------- inputs start ${(new Date().getTime() - startTime) / 1000}}---------------------`);
                             await page.type('input[name=username]', this.client_user);
                             await page.type('input[name=password]', this.client_password);
-                        
+                            Logger.info(`--------------------- inputs done ${(new Date().getTime() - startTime) / 1000}}---------------------`);
                             const submitButton = await page.$x('//*[@id="login-button"]');
                             await page.waitForTimeout(5000);
                             await submitButton[0].click();
+                            Logger.info(`--------------------- clicked ${(new Date().getTime() - startTime) / 1000}}---------------------`);
                             await page.waitForTimeout(10000);
-                        
+                            Logger.info(`--------------------- ${(new Date().getTime() - startTime) / 1000}}---------------------`);
                             await browser.close();
                             Logger.info('---------------------puppeteer closed---------------------');
-                            const endTime = new Date().getTime();
-                            Logger.info(`--------------------- ${(endTime - startTime) / 1000}}---------------------`);
+                            Logger.info(`--------------------- ${(new Date().getTime() - startTime) / 1000}}---------------------`);
                         } catch {
                             await browser.close();
                         }
@@ -100,6 +101,7 @@ export class Spotify {
 
             this.puppeteerRunning = false;
             this.setRefreshTokenInterval();
+            Logger.info(`--------------------- promises done ${(new Date().getTime() - startTime) / 1000}}---------------------`);
             return {
                 'access_token': this.access_token,
                 'email_sent': await this.sendEmail('puppeteer script'),
