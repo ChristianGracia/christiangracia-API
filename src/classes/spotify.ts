@@ -169,7 +169,7 @@ export class Spotify {
                 params: body,
         });
         if (res.status === 200) {
-            console.log(`${jobType} email sent XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX`)
+            console.warn(`--------------------------- ${jobType} email sent ---------------------------`)
             return res.data;
         } else {
             return {'Error': 'Error sending email '}; 

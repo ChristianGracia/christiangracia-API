@@ -31,6 +31,11 @@ router.get('/callback', async function (req, res) {
   res.status(200).json({});
 });
 
+router.get('/refresh', async (req: Request, res: Response) => {
+  const response = await spotify.refreshToken();
+  res.status(200).send(response);
+});
+
 router.get('/', (req: Request, res: Response) => {
   res.sendFile(path.join(__dirname, '../views/spotify.html'));
 });
