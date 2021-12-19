@@ -85,7 +85,7 @@ export class Spotify {
                                 }), {waitUntil: 'networkidle2'}
                             );
                             Logger.info(`--------------------- page start ${utilService.timePassed(startTime)}---------------------`);
-                            await page.waitForTimeout(5000);
+                            await page.waitForTimeout(3000);
                             Logger.info(`--------------------- after 5 second ${utilService.timePassed(startTime)}---------------------`);
                             await page.waitForSelector('input[name=username]',  {visible: true})
                             await page.waitForTimeout(600);
@@ -108,9 +108,9 @@ export class Spotify {
                             await page.waitForTimeout(1000);
                             await submitButton[0].click();
                             Logger.info(`--------------------- submit button click ${utilService.timePassed(startTime)}---------------------`);
-                            await page.waitForTimeout(7000);
-                            Logger.info(`--------------------- paused 12 second ${utilService.timePassed(startTime)}---------------------`);
+                            await page.waitForTimeout(2000);
                             await page.waitForXPath('//*[contains(text(), "token")]',  {visible: true});
+                            await page.waitForTimeout(7000);
                             Logger.info(`--------------------- success ${utilService.timePassed(startTime)}---------------------`);
                             await browser.close();
                             Logger.warn(`---------------------puppeteer closed ${utilService.timePassed(startTime)}---------------------`);
