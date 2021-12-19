@@ -13,6 +13,7 @@ export class Spotify {
     public client_user: string = '';
     public puppeteerRunning: boolean = false;
     public puppeteerSuccess: boolean = false;
+    public code: string = '';
 
     constructor(client_id, client_secret, client_user, client_password, redirect_uri) {
         this.client_id = client_id
@@ -35,6 +36,13 @@ export class Spotify {
         this.refresh_token = token
     }
 
+    public getCode(){
+        if (this.code) {
+            Logger.info('---------------------Code Get---------------------');
+            return this.code
+        } else return false;
+    }
+
     puppeteerLogInAuth = async () => {
         if (!this.client_id || !this. client_secret) {
             return {'Error': 'Missing client id or client secret'};
@@ -51,7 +59,7 @@ export class Spotify {
             promises.push(
                 new Promise(resolve => {
                     (async () => {
-                        Logger.info('---------------------puppeteer starting---------------------');
+                        Logger.warn('---------------------puppeteer starting---------------------');
                         const state = 'dkedkekdekdked';
                         const scope = 'user-read-private user-read-email user-read-currently-playing user-read-recently-played';
                         const browserOptions = {
@@ -87,14 +95,13 @@ export class Spotify {
                             Logger.info(`--------------------- inputs done ${(new Date().getTime() - startTime) / 1000}}---------------------`);
                             const submitButton = await page.$x('//*[@id="login-button"]');
                             Logger.info(`--------------------- login found ${(new Date().getTime() - startTime) / 1000}}---------------------`);
-                            await page.waitForTimeout(3000);
                             Logger.info(`--------------------- login clicked done ${(new Date().getTime() - startTime) / 1000}}---------------------`);
                             await submitButton[0].click();
                             Logger.info(`--------------------- login done ${(new Date().getTime() - startTime) / 1000}}---------------------`);
                             await page.waitForXPath('//*[contains(text(), "token")]');
                             Logger.info(`--------------------- ${(new Date().getTime() - startTime) / 1000}}---------------------`);
                             await browser.close();
-                            Logger.info('---------------------puppeteer closed---------------------');
+                            Logger.warn('---------------------puppeteer closed ---------------------');
                             Logger.info(`--------------------- ${(new Date().getTime() - startTime) / 1000}}---------------------`);
                         } catch {
                             Logger.error('--------------------- puppeteer error ---------------------');
@@ -108,7 +115,7 @@ export class Spotify {
 
             this.puppeteerRunning = false;
             this.setRefreshTokenInterval();
-            Logger.info(`--------------------- promises done ${(new Date().getTime() - startTime) / 1000}}---------------------`);
+            Logger.warn(`--------------------- promises done ${(new Date().getTime() - startTime) / 1000}}---------------------`);
             return {
                 'access_token': this.access_token,
                 'email_sent': await this.sendEmail('puppeteer script'),
@@ -122,7 +129,7 @@ export class Spotify {
 
     useAuthCodeToken = async (code) => {
         const startTime = new Date().getTime();
-        Logger.info('---------------------Getting token with code---------------------');
+        Logger.warn('---------------------Getting token with code---------------------');
         if (!code) {
             Logger.error('---------------------Puppeteer Login Auth Code flow not ran---------------------');
             return {'Error': 'Puppeteer Login Auth Code flow not ran'};
@@ -148,7 +155,7 @@ export class Spotify {
             })
             .then((response) => {
                 if (response.status === 200) {
-                    Logger.info(`--------------------- Access token set ${(new Date().getTime() - startTime) / 1000}}---------------------`);
+                    Logger.warn(`--------------------- Access token set ${(new Date().getTime() - startTime) / 1000}}---------------------`);
                     const { access_token,  refresh_token } = response.data;
                     this.setAccessToken(access_token, 'auth_code_flow')
                     this.setRefreshToken(refresh_token)
@@ -163,10 +170,12 @@ export class Spotify {
                 return { error }
             });
         } catch (err) {
+            Logger.error('--------------------- auth code error in token generation ---------------------');
             return {'Error': 'Error retrieving token using authorization code'}; 
         }
     }
     sendEmail = async (jobType) => {
+        Logger.warn('--------------------- sending email ---------------------');
         const body = {
               jobType: `${jobType}`,
               message: `${jobType} ran`
@@ -221,7 +230,7 @@ export class Spotify {
         if (!this.refreshToken) {
             return {'Error': 'Missing refresh token'};
         }
-
+        Logger.warn('---------------------REFRESHING TOKEN ---------------------');
         const data = {
             grant_type: 'refresh_token',
             refresh_token: this.refresh_token,
@@ -264,8 +273,12 @@ export class Spotify {
         }, 60 * 1000 * 30)
     }
     handleTokenError = async () => {
-        Logger.error('---------------------RESETTING TOKEN ---------------------');
-        this.access_token = '';
+        if (this.access_token !== '') {
+            Logger.error('---------------------RESETTING TOKEN ---------------------');
+            this.access_token = '';
+        } else {
+            Logger.warn('---------------------GETTING FIRST TIME TOKEN ---------------------');
+        }
         const promises = [];
         promises.push(
             new Promise(resolve => {

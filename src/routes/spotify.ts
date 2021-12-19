@@ -26,14 +26,17 @@ router.get('/recently-played', async function (req, res) {
 
 router.get('/callback', async function (req, res) {
   const code = req.query.code;
-  console.log(code);
-  console.log(typeof code);
   await spotify.useAuthCodeToken(code)
   res.status(200).send('<html><body><div class="token">token</div></body></html>')
 });
 
 router.get('/refresh', async (req: Request, res: Response) => {
   const response = await spotify.refreshToken();
+  res.status(200).send(response);
+});
+
+router.get('/use-code', async (req: Request, res: Response) => {
+  const response = await spotify.useAuthCodeToken(spotify.getCode());
   res.status(200).send(response);
 });
 
