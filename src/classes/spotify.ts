@@ -82,7 +82,7 @@ export class Spotify {
                             const submitButton = await page.$x('//*[@id="login-button"]');
                             await page.waitForTimeout(1000);
                             await submitButton[0].click();
-                            await page.waitForTimeout(4000);
+                            await page.waitForTimeout(5000);
                         
                         //   const songData = await page.evaluate(() => {
                         //     return JSON.parse(document.querySelector('body').innerText);

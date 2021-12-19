@@ -8,6 +8,7 @@ import cookieParser from 'cookie-parser';
 import createError from 'http-errors';
 import morganMiddleware from './config/morgan'
 import Logger from "./config/winston";
+const timeout = require('connect-timeout')
 
 dotenv.config();
 
@@ -53,9 +54,14 @@ app.options('*', cors(options));
 
 app.set('port', process.env.PORT || 3000);
 
+app.use(timeout('120s'))
 app.use(cookieParser());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use(haltOnTimedout)
+function haltOnTimedout (req, res, next) {
+  if (!req.timedout) next()
+}
 
 app.use('/static', express.static(path.join(__dirname, 'public')));
 
