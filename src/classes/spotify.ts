@@ -253,7 +253,7 @@ export class Spotify {
             this.access_token = '';
             this.refresh_token = 'dededed';
             this.refreshToken();
-        }, 45 * 1000 * 30)
+        }, 60 * 1000 * 30)
     }
     handleTokenError = async () => {
         this.access_token = '';

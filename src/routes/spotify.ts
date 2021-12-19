@@ -1,11 +1,8 @@
 import express, { Request, Response } from 'express';
-import request from 'request';
-import querystring from 'querystring';
 import { spotifyService } from '../services/spotify-service';
 import { Spotify } from '../classes/spotify';
 
 import * as path from 'path';
-import puppeteer from 'puppeteer';
 
 const router = express.Router();
 
@@ -16,13 +13,6 @@ const client_password = process.env.SPOTIFY_CLIENT_PASSWORD;
 const redirect_uri = process.env.SPOTIFY_REDIRECT_URL;
 
 const spotify = new Spotify(client_id, client_secret , client_user, client_password, redirect_uri);
-
-// const minutes = 30,
-//   intervalLength = minutes * 60 * 1000;
-// setInterval(function () {
-//   access_token = '';
-//   refreshToken();
-// }, intervalLength);
 
 
 router.get('/currently-playing', async function (req, res) {
