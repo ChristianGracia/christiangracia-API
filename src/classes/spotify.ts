@@ -11,6 +11,7 @@ export class Spotify {
     public client_password: string = '';
     public redirect_uri: string = '';
     public client_user: string = '';
+    public code: string = '';
     public puppeteerRunning: boolean = false;
     public puppeteerSuccess: boolean = false;
 
@@ -31,6 +32,11 @@ export class Spotify {
     }
     private setRefreshToken(token){
         this.refresh_token = token
+    }
+
+    public setCode(code){
+        this.code = code
+        console.info('----------------code set--------------------')
     }
 
     puppeteerLogInAuth = async () => {
@@ -117,14 +123,14 @@ export class Spotify {
         }
     }
 
-    useAuthCodeToken = async (code) => {
-        if (!code) {
+    useAuthCodeToken = async () => {
+        if (!this.code) {
             console.log('Puppeteer Login Auth Code flow not ran');
             return {'Error': 'Puppeteer Login Auth Code flow not ran'};
         }
         try {
             const data = {
-                code: code,
+                code: this.code,
                 redirect_uri: this.redirect_uri,
                 grant_type: 'authorization_code',
             }
