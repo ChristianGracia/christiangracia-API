@@ -2,7 +2,7 @@ const axios = require('axios');
 import puppeteer from 'puppeteer';
 import querystring from 'querystring';
 import Logger from '../config/winston';
-
+const utilService = require('../services/util-service');
 export class Spotify {
     public access_token: string = '';
     public refresh_token: string = '';
@@ -83,32 +83,35 @@ export class Spotify {
                                 state: state,
                                 }),
                             );
-                            Logger.info(`--------------------- page start ${(new Date().getTime() - startTime) / 1000}}---------------------`);
+                            Logger.info(`--------------------- page start ${utilService.timePassed(startTime)}---------------------`);
                             await page.waitForSelector('input[name=username]')
-                            Logger.info(`--------------------- username start ${(new Date().getTime() - startTime) / 1000}}---------------------`);
+                            Logger.info(`--------------------- username start ${utilService.timePassed(startTime)}---------------------`);
                             await page.type('input[name=username]', this.client_user);
-                            Logger.info(`--------------------- username done ${(new Date().getTime() - startTime) / 1000}}---------------------`);
+                            Logger.info(`--------------------- username done ${utilService.timePassed(startTime)}---------------------`);
                             await page.waitForSelector('input[name=password]')
-                            Logger.info(`--------------------- password start ${(new Date().getTime() - startTime) / 1000}}---------------------`);
+                            Logger.info(`--------------------- password start ${utilService.timePassed(startTime)}---------------------`);
                             await page.type('input[name=password]', this.client_password);
-                            Logger.info(`--------------------- password done ${(new Date().getTime() - startTime) / 1000}}---------------------`);
-                            Logger.info(`--------------------- inputs done ${(new Date().getTime() - startTime) / 1000}}---------------------`);
-                            Logger.info(`--------------------- searching submit ${(new Date().getTime() - startTime) / 1000}}---------------------`);
+                            Logger.info(`--------------------- password done ${utilService.timePassed(startTime)}---------------------`);
+                            Logger.info(`--------------------- inputs done ${utilService.timePassed(startTime)}---------------------`);
+                            await page.waitForTimeout(1000);
+                            Logger.info(`--------------------- paused 1 second ${utilService.timePassed(startTime)}---------------------`);
+                            Logger.info(`--------------------- searching submit ${utilService.timePassed(startTime)}---------------------`);
                             await page.waitForXPath('//*[@id="login-button"]');
-                            Logger.info(`--------------------- submit button found ${(new Date().getTime() - startTime) / 1000}}---------------------`);
+                            Logger.info(`--------------------- submit button found ${utilService.timePassed(startTime)}---------------------`);
                             const submitButton = await page.$x('//*[@id="login-button"]');
                             await page.waitForTimeout(1000);
+                            Logger.info(`--------------------- paused 1 second ${utilService.timePassed(startTime)}---------------------`);
                             await submitButton[0].click();
-                            Logger.info(`--------------------- submit clicked ${(new Date().getTime() - startTime) / 1000}}---------------------`);
+                            Logger.info(`--------------------- submit clicked ${utilService.timePassed(startTime)}---------------------`);
                             await page.waitForTimeout(500);
-                            Logger.info(`--------------------- login done ${(new Date().getTime() - startTime) / 1000}}---------------------`);
+                            Logger.info(`--------------------- paused 0.5 second ${utilService.timePassed(startTime)}---------------------`);
                             await page.waitForXPath('//*[contains(text(), "token")]');
-                            Logger.info(`--------------------- ${(new Date().getTime() - startTime) / 1000}}---------------------`);
+                            Logger.info(`--------------------- success ${utilService.timePassed(startTime)}---------------------`);
                             await browser.close();
                             Logger.warn('---------------------puppeteer closed ---------------------');
-                            Logger.info(`--------------------- ${(new Date().getTime() - startTime) / 1000}}---------------------`);
+                            Logger.info(`--------------------- ${utilService.timePassed(startTime)}---------------------`);
                         } catch {
-                            Logger.error('--------------------- puppeteer error ---------------------');
+                            Logger.error(`--------------------- puppeteer error ${utilService.timePassed(startTime)} ---------------------`);
                             await browser.close();
                         }
                         resolve(true);
@@ -119,7 +122,7 @@ export class Spotify {
 
             this.puppeteerRunning = false;
             this.setRefreshTokenInterval();
-            Logger.warn(`--------------------- promises done ${(new Date().getTime() - startTime) / 1000}}---------------------`);
+            Logger.warn(`--------------------- promises done ${utilService.timePassed(startTime)}---------------------`);
             return {
                 'access_token': this.access_token,
                 'email_sent': await this.sendEmail('puppeteer script'),
@@ -159,7 +162,7 @@ export class Spotify {
             })
             .then((response) => {
                 if (response.status === 200) {
-                    Logger.warn(`--------------------- Access token set ${(new Date().getTime() - startTime) / 1000}}---------------------`);
+                    Logger.warn(`--------------------- Access token set ${utilService.timePassed(startTime)}---------------------`);
                     const { access_token,  refresh_token } = response.data;
                     this.setAccessToken(access_token, 'auth_code_flow')
                     this.setRefreshToken(refresh_token)
