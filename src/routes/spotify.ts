@@ -26,6 +26,8 @@ router.get('/recently-played', async function (req, res) {
 
 router.get('/callback', async function (req, res) {
   const code = req.query.code;
+  console.log('codeeeeeecode');
+  console.log(code);
   await spotify.useAuthCodeToken(code)
   res.status(200).json({});
 });
