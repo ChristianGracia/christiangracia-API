@@ -75,16 +75,23 @@ export class Spotify {
                                 state: state,
                                 }),
                             );
-                            await page.waitForTimeout(2000);
-                            Logger.info(`--------------------- inputs start ${(new Date().getTime() - startTime) / 1000}}---------------------`);
+                            Logger.info(`--------------------- page start ${(new Date().getTime() - startTime) / 1000}}---------------------`);
+                            await page.waitForSelector('input[name=username]')
+                            Logger.info(`--------------------- username start ${(new Date().getTime() - startTime) / 1000}}---------------------`);
                             await page.type('input[name=username]', this.client_user);
+                            Logger.info(`--------------------- username done ${(new Date().getTime() - startTime) / 1000}}---------------------`);
+                            await page.waitForSelector('input[name=password]')
+                            Logger.info(`--------------------- password start ${(new Date().getTime() - startTime) / 1000}}---------------------`);
                             await page.type('input[name=password]', this.client_password);
+                            Logger.info(`--------------------- password done ${(new Date().getTime() - startTime) / 1000}}---------------------`);
                             Logger.info(`--------------------- inputs done ${(new Date().getTime() - startTime) / 1000}}---------------------`);
                             const submitButton = await page.$x('//*[@id="login-button"]');
-                            await page.waitForTimeout(5000);
+                            Logger.info(`--------------------- login found ${(new Date().getTime() - startTime) / 1000}}---------------------`);
+                            await page.waitForTimeout(3000);
+                            Logger.info(`--------------------- login clicked done ${(new Date().getTime() - startTime) / 1000}}---------------------`);
                             await submitButton[0].click();
-                            Logger.info(`--------------------- clicked ${(new Date().getTime() - startTime) / 1000}}---------------------`);
-                            await page.waitForTimeout(10000);
+                            Logger.info(`--------------------- login done ${(new Date().getTime() - startTime) / 1000}}---------------------`);
+                            await page.waitForXPath('//*[contains(text(), "CODE TOKEN RECEIVED")]');
                             Logger.info(`--------------------- ${(new Date().getTime() - startTime) / 1000}}---------------------`);
                             await browser.close();
                             Logger.info('---------------------puppeteer closed---------------------');
