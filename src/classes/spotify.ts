@@ -11,7 +11,6 @@ export class Spotify {
     public client_password: string = '';
     public redirect_uri: string = '';
     public client_user: string = '';
-    public code: string = '';
     public puppeteerRunning: boolean = false;
     public puppeteerSuccess: boolean = false;
 
@@ -21,26 +20,19 @@ export class Spotify {
         this.client_user = client_user
         this.client_password = client_password
         this.redirect_uri = redirect_uri
-        
-        if (!this.puppeteerRunning) {
-            this.puppeteerLogInAuth();
-        }
     }
 
     private setAccessToken(token, method = ''){
         this.access_token = token
-        Logger.info(`---------------------Access Token Set | method: ${method}---------------------`);
         if (method === 'auth_code_flow') {
+            Logger.info(`---------------------Access Token Set | method: ${method}---------------------`);
             this.puppeteerSuccess = true;
+        } else if (method === 'refresh_token') {
+            Logger.info('---------------------Token refreshed ---------------------');
         }
     }
     private setRefreshToken(token){
         this.refresh_token = token
-    }
-
-    public setCode(code){
-        this.code = code;
-        Logger.info('----------------code set--------------------');
     }
 
     puppeteerLogInAuth = async () => {
@@ -55,21 +47,23 @@ export class Spotify {
         }
         try {
             const promises = [];
+            const startTime = new Date().getTime();
             promises.push(
                 new Promise(resolve => {
                     (async () => {
                         Logger.info('---------------------puppeteer starting---------------------');
-                        console.log('puppeteer incoming xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx');
                         const state = 'dkedkekdekdked';
                         const scope = 'user-read-private user-read-email user-read-currently-playing user-read-recently-played';
                         const browserOptions = {
-                            // headless: true,
+                            headless: false,
                             ignoreHTTPSErrors: true,
                             args: ['--no-sandbox', '--disable-setuid-sandbox'],
+                            dumpio: true,
                             userAgent:
                             'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/65.0.3312.0 Safari/537.36',
                         };
                         const browser = await puppeteer.launch(browserOptions);
+                        
                         try {
                             const page = await browser.newPage();
                             await page.goto(
@@ -82,28 +76,19 @@ export class Spotify {
                                 state: state,
                                 }),
                             );
-                            await page.waitForTimeout(2000)
-                            console.log('input1 xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx');
-                            await page.$('input[name=username]');
-                            console.log('input1 found xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx');
+                            await page.waitForTimeout(2000);
                             await page.type('input[name=username]', this.client_user);
-                            console.log('input1 typed xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx');
-                            await page.$('input[name=password]');
-                            console.log('input2 found xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx');
                             await page.type('input[name=password]', this.client_password);
-                            console.log('input2 typed xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx');
-                            await page.waitForTimeout(1000);
-                            console.log('submit looking xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx');
+                        
                             const submitButton = await page.$x('//*[@id="login-button"]');
-                            console.log('submit found xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx');
-                            await page.waitForTimeout(3000);
-                            console.log('button found xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx');
+                            await page.waitForTimeout(5000);
                             await submitButton[0].click();
-                            console.log('button clicked xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx');
-                            await page.waitForTimeout(3000);
-                            console.log('aiwaiting close xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx');
+                            await page.waitForTimeout(10000);
+                        
                             await browser.close();
-                            console.log('close xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx');
+                            Logger.info('---------------------puppeteer closed---------------------');
+                            const endTime = new Date().getTime();
+                            Logger.info(`--------------------- ${(endTime - startTime) / 1000}}---------------------`);
                         } catch {
                             await browser.close();
                         }
@@ -112,18 +97,12 @@ export class Spotify {
                 })
             );
             await Promise.all(promises);
+
             this.puppeteerRunning = false;
-            // let counter = 0;
-            // var interval = setInterval(() => {
-            //     if (this.puppeteerSuccess || counter > 2) {
-            //         clearInterval(interval);
-            //     }
-            //     counter = counter + 1;
-            // }, 1000);
-            // console.log(`counter: ${counter} ${counter} ${counter}`);
-            await this.sendEmail('puppeteer script - code')
+            this.setRefreshTokenInterval();
             return {
-                'code': this.code,
+                'access_token': this.access_token,
+                'email_sent': await this.sendEmail('puppeteer script'),
             };
         } catch (err) {
             this.puppeteerRunning = false;
@@ -131,19 +110,18 @@ export class Spotify {
         }
     }
 
-    useAuthCodeToken = async () => {
-        if (!this.code) {
+    useAuthCodeToken = async (code) => {
+        Logger.info('---------------------Getting token with code---------------------');
+        if (!code) {
             console.log('Puppeteer Login Auth Code flow not ran');
             return {'Error': 'Puppeteer Login Auth Code flow not ran'};
         }
         try {
             const data = {
-                code: this.code,
+                code: code,
                 redirect_uri: this.redirect_uri,
                 grant_type: 'authorization_code',
             }
-
-            Logger.info('---------------------Getting token with code---------------------');
             return axios({
                 url: 'https://accounts.spotify.com/api/token',
                 method: 'post',
@@ -156,13 +134,11 @@ export class Spotify {
                     'Content-Type': 'application/x-www-form-urlencoded'
                 },
             })
-            .then(async (response) => {
+            .then((response) => {
                 if (response.status === 200) {
                     const { access_token,  refresh_token } = response.data;
                     this.setAccessToken(access_token, 'auth_code_flow')
                     this.setRefreshToken(refresh_token)
-                    await this.sendEmail('puppeteer script')
-                    this.setRefreshTokenInterval();
                     return { auth: true }
                 } else {
                     return {'Error': 'Error retrieving token '}; 
@@ -251,7 +227,6 @@ export class Spotify {
         .then(async (response) => {
             if (response.status === 200) {
                 const { access_token, } = response.data;
-                Logger.info('---------------------Token refreshed ---------------------');
                 console.log(response.data);
                 this.setAccessToken(access_token, 'refresh_token');
                 this.setRefreshTokenInterval();
