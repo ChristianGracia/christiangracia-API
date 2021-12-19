@@ -172,4 +172,94 @@ export class Spotify {
             return {'Error': 'Error sending email '}; 
         }
     }
+    getCurrentlyPlaying = async () => {
+        console.log(this.access_token)
+        if (this.access_token === '') {
+            console.log('server started, no token found');
+            const promises = [];
+            promises.push(
+                new Promise(resolve => {
+                    (async () => {
+                        await this.puppeteerLogInAuth()
+                        resolve(true);
+                    })();
+                })
+            );
+            await Promise.all(promises);
+        }
+
+        return await axios({
+            url: 'https://api.spotify.com/v1/me/player/currently-playing',
+            method: 'get',
+            headers: {
+                Authorization: 'Bearer ' + this.access_token,
+                'Accept':'application/json',
+                'Content-Type': 'application/x-www-form-urlencoded'
+            },
+        })
+    }
+    getRecentlyPlayed  = async () => { 
+        console.log(this.access_token)
+        if (this.access_token === '') {
+            console.log('server started, no token found');
+            const promises = [];
+            promises.push(
+                new Promise(resolve => {
+                    (async () => {
+                        await this.puppeteerLogInAuth()
+                        resolve(true);
+                    })();
+                })
+            );
+            await Promise.all(promises);
+        }
+
+        return await axios({
+            url: 'https://api.spotify.com/v1/me/player/recently-played?limit=50',
+            method: 'get',
+            headers: {
+                Authorization: 'Bearer ' + this.access_token,
+                'Accept':'application/json',
+                'Content-Type': 'application/x-www-form-urlencoded'
+            },
+        })
+    }
+
+    refreshToken = async () => {
+        if (!this.refreshToken) {
+            return {'Error': 'Missing refresh token'};
+        }
+        const data = {
+            grant_type: 'refresh_token',
+            refresh_token: this.refresh_token,
+        };
+
+        return axios({
+            url: 'https://accounts.spotify.com/api/token',
+            method: 'post',
+            params: data,
+            headers: {
+                Authorization:
+                'Basic ' +
+                new Buffer(this.client_id + ':' + this.client_secret).toString('base64'),
+                'Accept':'application/json',
+                'Content-Type': 'application/x-www-form-urlencoded'
+            },
+        })
+        .then((response) => {
+            if (response.status === 200) {
+                const { access_token,  refresh_token } = response.data;
+                console.log('XXXXXXXXXXXXXX   Token refreshed XXXXXXXXXXXXXXXXX')
+                console.log(response.data);
+                this.setAccessToken(access_token, 'refresh_token');
+                this.setRefreshToken(refresh_token)
+                return { auth: true}
+            } else {
+                return {'Error': 'Error refreshing token '}; 
+            }    
+        })
+        .catch((error) => {
+            return { error }
+        });
+    }
 }
