@@ -14,7 +14,6 @@ const redirect_uri = process.env.SPOTIFY_REDIRECT_URL;
 
 const spotify = new Spotify(client_id, client_secret , client_user, client_password, redirect_uri);
 
-
 router.get('/currently-playing', async function (req, res) {
   const response = await spotify.getCurrentlyPlaying();
   res.status(response.status).send(response.data ? spotifyService.formatCurrentSong(response.data) : []);

@@ -6,13 +6,13 @@ import * as dotenv from 'dotenv';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
 import createError from 'http-errors';
-const morgan = require('morgan');
-const logger = require('./config/winston');
+import morganMiddleware from './config/morgan'
+import Logger from "./config/winston";
 
 dotenv.config();
 
 const app = express();
-app.use(morgan('combined', { stream: logger.stream.write }));
+app.use(morganMiddleware)
 
 const router = express.Router();
 app.use(router);
@@ -83,7 +83,7 @@ app.use((req, res, next) => {
 });
 
 app.use(function (err, req, res, next) {
-  logger.error(
+  Logger.error(
     `${req.method} - ${err.message}  - ${req.originalUrl} - ${req.ip}`,
   );
   next(err);

@@ -51,7 +51,7 @@ export class Spotify {
                         const state = 'dkedkekdekdked';
                         const scope = 'user-read-private user-read-email user-read-currently-playing user-read-recently-played';
                         const browserOptions = {
-                            headless: false,
+                            headless: true,
                             ignoreHTTPSErrors: true,
                             args: ['--no-sandbox', '--disable-setuid-sandbox'],
                             dumpio: true,
@@ -215,7 +215,6 @@ export class Spotify {
             grant_type: 'refresh_token',
             refresh_token: this.refresh_token,
         };
-        console.log('second refresh')
 
         return axios({
             url: 'https://accounts.spotify.com/api/token',
@@ -251,7 +250,6 @@ export class Spotify {
     setRefreshTokenInterval = async () => {
         setTimeout(() => {
             this.access_token = '';
-            this.refresh_token = 'dededed';
             this.refreshToken();
         }, 60 * 1000 * 30)
     }
