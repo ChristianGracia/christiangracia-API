@@ -93,10 +93,14 @@ export class Spotify {
                             await page.type('input[name=password]', this.client_password);
                             Logger.info(`--------------------- password done ${(new Date().getTime() - startTime) / 1000}}---------------------`);
                             Logger.info(`--------------------- inputs done ${(new Date().getTime() - startTime) / 1000}}---------------------`);
+                            Logger.info(`--------------------- searching submit ${(new Date().getTime() - startTime) / 1000}}---------------------`);
+                            await page.waitForXPath('//*[@id="login-button"]');
+                            Logger.info(`--------------------- submit button found ${(new Date().getTime() - startTime) / 1000}}---------------------`);
                             const submitButton = await page.$x('//*[@id="login-button"]');
-                            Logger.info(`--------------------- login found ${(new Date().getTime() - startTime) / 1000}}---------------------`);
-                            Logger.info(`--------------------- login clicked done ${(new Date().getTime() - startTime) / 1000}}---------------------`);
+                            await page.waitForTimeout(1000);
                             await submitButton[0].click();
+                            Logger.info(`--------------------- submit clicked ${(new Date().getTime() - startTime) / 1000}}---------------------`);
+                            await page.waitForTimeout(500);
                             Logger.info(`--------------------- login done ${(new Date().getTime() - startTime) / 1000}}---------------------`);
                             await page.waitForXPath('//*[contains(text(), "token")]');
                             Logger.info(`--------------------- ${(new Date().getTime() - startTime) / 1000}}---------------------`);
