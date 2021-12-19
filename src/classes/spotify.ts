@@ -91,12 +91,13 @@ export class Spotify {
                             Logger.info(`--------------------- login clicked done ${(new Date().getTime() - startTime) / 1000}}---------------------`);
                             await submitButton[0].click();
                             Logger.info(`--------------------- login done ${(new Date().getTime() - startTime) / 1000}}---------------------`);
-                            await page.waitForXPath('//*[contains(text(), "CODE TOKEN RECEIVED")]');
+                            await page.waitForXPath('//*[contains(text(), "token")]');
                             Logger.info(`--------------------- ${(new Date().getTime() - startTime) / 1000}}---------------------`);
                             await browser.close();
                             Logger.info('---------------------puppeteer closed---------------------');
                             Logger.info(`--------------------- ${(new Date().getTime() - startTime) / 1000}}---------------------`);
                         } catch {
+                            Logger.error('--------------------- puppeteer error ---------------------');
                             await browser.close();
                         }
                         resolve(true);
@@ -114,17 +115,20 @@ export class Spotify {
             };
         } catch (err) {
             this.puppeteerRunning = false;
+            Logger.error('--------------------- puppeteer error ---------------------');
             return {};
         }
     }
 
     useAuthCodeToken = async (code) => {
+        const startTime = new Date().getTime();
         Logger.info('---------------------Getting token with code---------------------');
         if (!code) {
-            console.log('Puppeteer Login Auth Code flow not ran');
+            Logger.error('---------------------Puppeteer Login Auth Code flow not ran---------------------');
             return {'Error': 'Puppeteer Login Auth Code flow not ran'};
         }
         try {
+            Logger.info('--------------------- Using auth code ---------------------');
             const data = {
                 code: code,
                 redirect_uri: this.redirect_uri,
@@ -144,15 +148,18 @@ export class Spotify {
             })
             .then((response) => {
                 if (response.status === 200) {
+                    Logger.info(`--------------------- Access token set ${(new Date().getTime() - startTime) / 1000}}---------------------`);
                     const { access_token,  refresh_token } = response.data;
                     this.setAccessToken(access_token, 'auth_code_flow')
                     this.setRefreshToken(refresh_token)
                     return { auth: true }
                 } else {
+                    Logger.error('--------------------- auth code error in token generation ---------------------');
                     return {'Error': 'Error retrieving token '}; 
                 }    
             })
             .catch((error) => {
+                Logger.error('--------------------- auth code error in token generation ---------------------');
                 return { error }
             });
         } catch (err) {
