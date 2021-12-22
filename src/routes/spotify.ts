@@ -40,9 +40,4 @@ router.get('/use-code', async (req: Request, res: Response) => {
   res.status(200).send(response);
 });
 
-router.get('/auth-code', async (req: Request, res: Response) => {
-  const response = await spotify.handleTokenError();
-  res.status(200).send(response);
-});
-
 module.exports = router;
