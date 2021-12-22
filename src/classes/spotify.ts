@@ -49,7 +49,7 @@ export class Spotify {
             return {'Error': 'Missing client id or client secret'};
         }
         if (this.puppeteerRunning) {
-            console.log('zzzzzzzzzzzzzzzzzzzzzzzz Bot already running zzzzzzzzzzzzzzzzzzzzzz')
+            Logger.error('zzzzzzzzzzzzzzzzzzzzzzzz Bot already running zzzzzzzzzzzzzzzzzzzzzz')
             return {'Error': 'Bot already running'};
         } else {
             this.puppeteerRunning = true;
@@ -265,7 +265,7 @@ export class Spotify {
                 console.log(response.data);
                 this.setAccessToken(access_token, 'refresh_token');
                 this.setRefreshTokenInterval();
-                return { auth: true, 'email_sent': await this.sendEmail('refresh token')}
+                return { auth: true }
             } else {
                 await this.handleTokenError();
                 return {};
@@ -281,7 +281,7 @@ export class Spotify {
         setTimeout(() => {
             this.access_token = '';
             this.refreshToken();
-        }, 60 * 1000 * 30)
+        }, 60 * 1000 * 50)
     }
     handleTokenError = async () => {
         if (this.access_token !== '') {
