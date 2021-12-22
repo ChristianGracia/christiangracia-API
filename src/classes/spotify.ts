@@ -100,10 +100,11 @@ export class Spotify {
                             const submitButton = await page.$x('//*[@id="login-button"]');
                             await page.waitForTimeout(1000);
                             await submitButton[0].click();
+                            await page.waitForTimeout(2000);
                             Logger.info(`--------------------- login button clicked ${utilService.timePassed(startTime)}---------------------`);
                             await page.waitForTimeout(5000);
                             await page.waitForXPath('//*[contains(text(), "token")]', {visible: true});
-                            await page.waitForTimeout(10000);
+                            await page.waitForTimeout(3000);
                             Logger.info(`--------------------- success ${utilService.timePassed(startTime)}---------------------`);
                             await browser.close();
                             Logger.warn(`---------------------puppeteer closed ${utilService.timePassed(startTime)}---------------------`);
