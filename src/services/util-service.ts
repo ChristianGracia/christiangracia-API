@@ -10,7 +10,15 @@ const utilService = {
     timePassed: (startTime): string => {
       return `${((new Date().getTime() - startTime) / 1000)} seconds`
     },
-  };
+    /**
+    * Gets random number in range min max
+    * @param { number } min - range start
+    * @param { number } max - range end
+    */
+    randonNumberInRange: (min: number, max: number): number => {
+      return Math.floor(Math.random()*(max-min+1)+min);
+    },
+};
 
   module.exports = utilService;
   
