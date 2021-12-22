@@ -220,7 +220,7 @@ export class Spotify {
         }
 
         return await axios({
-            url: 'https://api.spotify.com/v1/me/player/recently-played?limit=50',
+            url: 'https://api.spotify.com/v1/me/player/recently-played?limit=100',
             method: 'get',
             headers: {
                 Authorization: 'Bearer ' + this.access_token,
