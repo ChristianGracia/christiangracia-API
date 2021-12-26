@@ -11,7 +11,7 @@ const client_user = process.env.SPOTIFY_CLIENT_USER;
 const client_password = process.env.SPOTIFY_CLIENT_PASSWORD;
 const redirect_uri = process.env.SPOTIFY_REDIRECT_URL;
 
-const spotify = new Spotify(client_id, client_secret , client_user, client_password, redirect_uri);
+const spotify = new Spotify(client_id, client_secret, client_user, client_password, redirect_uri);
 
 router.get('/currently-playing', async function (req, res) {
   const response = await spotify.getCurrentlyPlaying();
@@ -39,5 +39,11 @@ router.get('/use-code', async (req: Request, res: Response) => {
   const response = await spotify.useAuthCodeToken(spotify.getCode());
   res.status(200).send(response);
 });
+
+router.get('/reset', async (req: Request, res: Response) => {
+  const response = await spotify.handleTokenError();
+  res.status(200).send(response);
+});
+
 
 module.exports = router;

@@ -64,7 +64,7 @@ export class Spotify {
                         const state = 'dkedkekdekdked';
                         const scope = 'user-read-private user-read-email user-read-currently-playing user-read-recently-played';
                         const browserOptions = {
-                            headless: true,
+                            headless: false,
                             ignoreHTTPSErrors: true,
                             args: ['--no-sandbox', '--disable-setuid-sandbox'],
                             userAgent:
@@ -98,7 +98,7 @@ export class Spotify {
                             await page.waitForXPath('//*[@id="login-button"]', {visible: true});
                             Logger.info(`--------------------- login button found ${utilService.timePassed(startTime)}---------------------`);
                             const submitButton = await page.$x('//*[@id="login-button"]');
-                            await page.waitForTimeout(utilService.randonNumberInRange(500, 1000));
+                            await page.waitForTimeout(utilService.randonNumberInRange(1000, 1500));
                             await submitButton[0].click();
                             await page.waitForTimeout(utilService.randonNumberInRange(1000, 2000));
                             Logger.info(`--------------------- login button clicked ${utilService.timePassed(startTime)}---------------------`);
