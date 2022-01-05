@@ -87,13 +87,13 @@ export class Spotify {
                             Logger.info(`--------------------- page start ${utilService.timePassed(startTime)}---------------------`);
                             await page.waitForTimeout(utilService.randonNumberInRange(1300, 2000));
                             Logger.info(`--------------------- after 2.5 second ${utilService.timePassed(startTime)}---------------------`);
-                            await page.waitForSelector('input[name=username]', {visible: true})
+                            await page.waitForSelector('input[id=login-username]', {visible: true})
                             await page.waitForTimeout(utilService.randonNumberInRange(500, 1000));
-                            await page.type('input[name=username]', this.client_user);
+                            await page.type('input[id=login-username]', this.client_user);
                             Logger.info(`--------------------- username done ${utilService.timePassed(startTime)}---------------------`);
-                            await page.waitForSelector('input[name=password]', {visible: true})
+                            await page.waitForSelector('input[id=login-password]', {visible: true})
                             await page.waitForTimeout(utilService.randonNumberInRange(500, 1000));
-                            await page.type('input[name=password]', this.client_password);
+                            await page.type('input[id=login-password]', this.client_password);
                             Logger.info(`--------------------- password done ${utilService.timePassed(startTime)}---------------------`);
                             await page.waitForXPath('//*[@id="login-button"]', {visible: true});
                             Logger.info(`--------------------- login button found ${utilService.timePassed(startTime)}---------------------`);
