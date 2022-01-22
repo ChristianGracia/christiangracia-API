@@ -11,11 +11,13 @@ export const githubService = {
     });
 
     const comp = {};
+
     const uniqueLangugeRepos = [];
     const dupes = [];
     const boringRepos = [];
     const starRepos = [];
     const importantLanguageRepos = [];
+
     const boringNames = ['onabeat.com'];
     const starRepoNames = [
       'christiangracia.com4.0',
@@ -23,9 +25,9 @@ export const githubService = {
       'christiangracia-API',
     ];
     const importantLanguages = ['C', 'C#', 'Python', 'Java'];
+
     for (const repo of sortedRepos) {
-      const language = repo.language;
-      const name = repo.name;
+      const { language, name } = repo;
       if (starRepoNames.includes(name)) {
         comp[language] = language;
         starRepos.push(repo);
