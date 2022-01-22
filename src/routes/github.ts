@@ -6,7 +6,7 @@ import { githubService } from '../services/github-service';
 router.get('/all-repos', async (req: Request, res: Response) => {
   const { gitId, gitSecret } = process.env;
   const response = await axios({
-    url: `https://api.github.com/users/ChristianGracia/repos?per_page650&sort=createdasc&client_id=${gitId}&client_secret=${gitSecret}`,
+    url: `https://api.github.com/users/ChristianGracia/repos?per_page=50&sort=createdasc&client_id=${gitId}&client_secret=${gitSecret}`,
   });
   if (response.status === 200) {
     const { data } = response;
