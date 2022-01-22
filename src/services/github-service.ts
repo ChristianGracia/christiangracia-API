@@ -33,7 +33,7 @@ export const githubService = {
         starRepos.push(repo);
       } else {
         if (comp[language]) {
-          if (language === 'Javascript') {
+          if (language === 'JavaScript') {
             boringRepos.push(repo);
           } else if (importantLanguages.includes(language)) {
             importantLanguageRepos.push(repo);
