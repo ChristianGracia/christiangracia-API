@@ -7,7 +7,7 @@ import * as path from 'path';
 router.get('/all-repos', async (req: Request, res: Response) => {
   const { gitId, gitSecret } = process.env;
 
-  const URL = `https://api.github.com/users/ChristianGracia/repos?per_page=20&sort=createdasc&client_id=${gitId}&client_secret=${gitSecret}`;
+  const URL = `https://api.github.com/users/ChristianGracia/repos?per_page=50&sort=createdasc&client_id=${gitId}&client_secret=${gitSecret}`;
 
   const json = await makeRequest(URL);
 
