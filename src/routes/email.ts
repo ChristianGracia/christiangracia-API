@@ -1,6 +1,5 @@
 import express, { Request, Response } from 'express';
 const router = express.Router();
-import * as path from 'path';
 
 import { NodeMailgun } from 'ts-mailgun';
 import { emailService } from '../services/email-service';
@@ -76,11 +75,6 @@ router.post('/job-ran', (req: Request, res: Response) => {
     .send(CG_EMAIL, emailTitle, emailService.createCgEmail('', '', message))
     .then(() => res.status(200).send({ 'job-ran': true, 'job-type': jobType }))
     .catch((error) => res.status(500).send(error));
-});
-
-router.get('/', (req: Request, res: Response) => {
-  const reqPath = path.join(__dirname, '../views/email.html');
-  res.sendFile(path.join(reqPath));
 });
 
 module.exports = router;
