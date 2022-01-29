@@ -18,6 +18,17 @@ const utilService = {
     randonNumberInRange: (min: number, max: number): number => {
       return Math.floor(Math.random()*(max-min+1)+min);
     },
+    /**
+    * Converts files read as strings to html
+    * @param { number } data - string data read from a file
+    */
+    formatFileToHtmlString: (data: string): string => {
+      let html = '';
+      data.split('\n').forEach((item : string) => {
+        html += `<p>${item.replace(/\s/g, '&nbsp;')}</p>`;
+      })
+      return html;
+    },
 };
 
   module.exports = utilService;
