@@ -1,9 +1,6 @@
 import express, { Request, Response } from 'express';
 import { spotifyService } from '../services/spotify-service';
 import { Spotify } from '../classes/spotify';
-const utilService = require('../services/util-service');
-
-import * as fs from 'fs';
 
 
 const router = express.Router();
@@ -47,15 +44,5 @@ router.get('/reset', async (req: Request, res: Response) => {
   const response = await spotify.handleTokenError();
   res.status(200).send(response);
 });
-
-router.get('/show-code', async (req: Request, res: Response) => {
-  fs.readFile('src/classes/spotify.ts', 'utf8', (err, data) => {
-    if (err) {
-      res.status(500).send(err);
-    }
-    res.status(200).send(utilService.formatFileToHtmlString(data));
-  })
-});
-
 
 module.exports = router;
