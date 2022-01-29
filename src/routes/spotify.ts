@@ -2,6 +2,8 @@ import express, { Request, Response } from 'express';
 import { spotifyService } from '../services/spotify-service';
 import { Spotify } from '../classes/spotify';
 
+import * as fs from 'fs';
+
 
 const router = express.Router();
 
@@ -43,6 +45,25 @@ router.get('/use-code', async (req: Request, res: Response) => {
 router.get('/reset', async (req: Request, res: Response) => {
   const response = await spotify.handleTokenError();
   res.status(200).send(response);
+});
+
+router.get('/show-code', async (req: Request, res: Response) => {
+  fs.readFile('src/classes/spotify.ts', 'utf8', (err, data) => {
+    if (err) {
+      res.status(500).send(err);
+    }
+    let html = '';
+    // data.replace('\n', 'zzz')
+    data.split('\n').forEach((item : string, index : number) => {
+      if (index < 3) {
+        console.log(item)
+      }
+      
+      html += `<p>${item.replace(/\s/g, '&nbsp;')}</p>`;
+    })
+    // data.replace('\n', 'zzz').replace(/\s/g, '&nbps;')
+    res.status(200).send(html);
+  })
 });
 
 
