@@ -1,5 +1,3 @@
-import e from 'express';
-
 export const githubService = {
   /**
    * sort repos github repos by first update time and then unique language used
