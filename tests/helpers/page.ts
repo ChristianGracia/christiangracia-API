@@ -1,5 +1,4 @@
 import * as fs from 'fs';
-import Logger from '../../src/config/winston';
 
 export const htmlHelper = {
     /**
@@ -14,19 +13,19 @@ export const htmlHelper = {
                 }
                 const page = document.createElement( 'html' );
                 page.innerHTML = data.toString();
-                Logger.info(`--------------------- page created: '/home.html' ---------------------`);
                 resolve(page);
             });
         });
     },
     /**
-     * Parses html string and gets page title text
-     * @param { string } htmlString - selected repo to view commits from
+     * Parses html string and gets rquested element by tag name
+     * @param { string } htmlString - html file inside a string
+     * @param { string } elementTag - element to be searched for
      */
-    checkPageTitle: (htmlString: string) => {
-        const el = document.createElement( 'html' );
+     getHTmlElements: (htmlString: string, elementTag: string) : HTMLCollectionOf<Element> => {
+        const el = document.createElement('html');
         el.innerHTML = htmlString;
-        return el.getElementsByTagName( 'title' )[0].textContent;
+        return el.getElementsByTagName(elementTag);
     }
 }
   
