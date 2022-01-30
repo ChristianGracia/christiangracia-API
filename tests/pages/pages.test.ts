@@ -17,7 +17,7 @@ pages.forEach((page: Page) => {
   let html;
   let title;
 
-  describe('/', () => {
+  describe('Rendered Views Tests', () => {
     beforeAll(async (done) => {
       server = app.listen(null, async () => {
         global.agent = supertest.agent(server);
@@ -43,11 +43,12 @@ pages.forEach((page: Page) => {
       expect(titleFound + "1").not.toBe(title);
     });
 
-    it("Get footer equals to what is expected", async () => {
+    it("GET footer equals to what is expected", async () => {
       const response = await supertest(app).get(page.baseUrl);
 
       Logger.info(`--------------------- bottom text located ---------------------`);
-      expect(response.text.indexOf(FOOTER_TEXT)).toBeTruthy
+      expect(response.text.indexOf(FOOTER_TEXT)).toBeTruthy;
+      expect(response.text.indexOf(FOOTER_TEXT + '3')).toBeFalsy;
     });
   
     afterAll(async () => {

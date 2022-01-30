@@ -2,7 +2,7 @@ const axios = require('axios');
 import puppeteer from 'puppeteer';
 import querystring from 'querystring';
 import Logger from '../config/winston';
-const utilService = require('../services/util-service');
+import { utilService } from '../services/util-service';
 export class Spotify {
     public spotifyUrl: string = 'https://accounts.spotify.com/api/token';
     public access_token: string = '';
@@ -64,7 +64,8 @@ export class Spotify {
                         const state = 'dkedkekdekdked';
                         const scope = 'user-read-private user-read-email user-read-currently-playing user-read-recently-played';
                         const browserOptions = {
-                            headless: true,
+                            dumpio: true,
+                            headless: false,
                             ignoreHTTPSErrors: true,
                             args: ['--no-sandbox', '--disable-setuid-sandbox'],
                             userAgent:
