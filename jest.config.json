@@ -1,0 +1,14 @@
+{
+  "preset": "ts-jest",
+  "testEnvironment": "node",
+  "setupFiles": ["dotenv/config"],
+  "transform": {
+    "^.+\\.(t|j)sx?$": "ts-jest"
+  },
+  "transformIgnorePatterns": ["^.+\\.js$"],
+  "testRegex": "(/__tests__/.*|(\\.|/)(test|spec))\\.(jsx?|tsx?)$",
+  "moduleFileExtensions": ["ts", "tsx", "js", "jsx", "json", "node"],
+  "collectCoverageFrom": [
+    "!*.js"
+  ]
+}
