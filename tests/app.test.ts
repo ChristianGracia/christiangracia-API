@@ -1,20 +1,25 @@
-// import supertest from 'supertest';
-// import app from '..app/src/app';
+import supertest from 'supertest';
+import app from '../src/app';
 
-// let server;
+let server;
 
-// describe('/', () => {
-//   beforeAll(async (done) => {
-//     server = app.listen(null, () => {
-//       global.agent = supertest.agent(server);
-//       done();
-//     });
-//   });
+declare global {
+    var agent: any;
+}
+  
 
-//   it('GET should return 200', async () => {
-//     const response = await supertest(app).get('/');
-//     expect(response.status).toBe(200);
-//   });
+describe('/', () => {
+  beforeAll(async (done) => {
+    server = app.listen(null, () => {
+      global.agent = supertest.agent(server);
+      done();
+    });
+  });
+
+  it('GET should return 200', async () => {
+    const response = await supertest(app).get('/');
+    expect(response.status).toBe(200);
+  });
 
 //   it('POST should return 200', async () => {
 //     const response = await supertest(app).post('/');
@@ -31,7 +36,7 @@
 //     expect(response.status).toBe(200);
 //   });
 
-//   afterAll(async () => {
-//     await server.close();
-//   });
-// });
+  afterAll(async () => {
+    await server.close();
+  });
+});
