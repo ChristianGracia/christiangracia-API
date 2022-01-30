@@ -3,6 +3,7 @@ import puppeteer from 'puppeteer';
 import querystring from 'querystring';
 import Logger from '../config/winston';
 import { utilService } from '../services/util-service';
+
 export class Spotify {
     public spotifyUrl: string = 'https://accounts.spotify.com/api/token';
     public access_token: string = '';
@@ -65,7 +66,7 @@ export class Spotify {
                         const scope = 'user-read-private user-read-email user-read-currently-playing user-read-recently-played';
                         const browserOptions = {
                             dumpio: true,
-                            headless: false,
+                            headless: true,
                             ignoreHTTPSErrors: true,
                             args: ['--no-sandbox', '--disable-setuid-sandbox'],
                             userAgent:
@@ -83,7 +84,8 @@ export class Spotify {
                                 scope: scope,
                                 redirect_uri: this.redirect_uri,
                                 state: state,
-                                }), {waitUntil: 'networkidle2'}
+                                }), 
+                                // {waitUntil: 'networkidle2'}
                             );
                             Logger.info(`--------------------- page start ${utilService.timePassed(startTime)}---------------------`);
                             await page.waitForTimeout(utilService.randonNumberInRange(1300, 2000));
@@ -109,7 +111,8 @@ export class Spotify {
                             Logger.info(`--------------------- success ${utilService.timePassed(startTime)}---------------------`);
                             await browser.close();
                             Logger.warn(`---------------------puppeteer closed ${utilService.timePassed(startTime)}---------------------`);
-                        } catch {
+                        } catch (err) {
+                            console.log(err)
                             Logger.error(`--------------------- puppeteer error ${utilService.timePassed(startTime)} ---------------------`);
                             await browser.close();
                         }
