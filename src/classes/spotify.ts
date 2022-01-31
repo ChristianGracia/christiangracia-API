@@ -2,7 +2,8 @@ const axios = require('axios');
 import puppeteer from 'puppeteer';
 import querystring from 'querystring';
 import Logger from '../config/winston';
-const utilService = require('../services/util-service');
+import { utilService } from '../services/util-service';
+
 export class Spotify {
     public spotifyUrl: string = 'https://accounts.spotify.com/api/token';
     public access_token: string = '';
@@ -60,15 +61,17 @@ export class Spotify {
             promises.push(
                 new Promise(resolve => {
                     (async () => {
-                        Logger.warn('---------------------puppeteer starting---------------------');
+                        const env = process.env.NODE_ENV === 'production';
+                        Logger.warn(`---------------------puppeteer starting | headless ${env}---------------------`);
                         const state = 'dkedkekdekdked';
                         const scope = 'user-read-private user-read-email user-read-currently-playing user-read-recently-played';
                         const browserOptions = {
-                            headless: true,
+                            headless: env,
                             ignoreHTTPSErrors: true,
                             args: ['--no-sandbox', '--disable-setuid-sandbox'],
                             userAgent:
-                            'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/65.0.3312.0 Safari/537.36',
+                            'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/61.0.3163.100 Safari/537.36',
+                            ...(process.env.PUPPETEER_SKIP_CHROMIUM_DOWNLOAD && { executablePath: '/usr/bin/chromium-browser' }),
                         };
                         const browser = await puppeteer.launch(browserOptions);
                         
@@ -77,11 +80,11 @@ export class Spotify {
                             await page.goto(
                             'https://accounts.spotify.com/authorize?' +
                                 querystring.stringify({
-                                response_type: 'code',
-                                client_id: this.client_id,
-                                scope: scope,
-                                redirect_uri: this.redirect_uri,
-                                state: state,
+                                    response_type: 'code',
+                                    client_id: this.client_id,
+                                    scope: scope,
+                                    redirect_uri: this.redirect_uri,
+                                    state: state,
                                 }), {waitUntil: 'networkidle2'}
                             );
                             Logger.info(`--------------------- page start ${utilService.timePassed(startTime)}---------------------`);
@@ -108,7 +111,8 @@ export class Spotify {
                             Logger.info(`--------------------- success ${utilService.timePassed(startTime)}---------------------`);
                             await browser.close();
                             Logger.warn(`---------------------puppeteer closed ${utilService.timePassed(startTime)}---------------------`);
-                        } catch {
+                        } catch (err) {
+                            console.log(err)
                             Logger.error(`--------------------- puppeteer error ${utilService.timePassed(startTime)} ---------------------`);
                             await browser.close();
                         }

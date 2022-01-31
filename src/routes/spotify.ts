@@ -45,5 +45,4 @@ router.get('/reset', async (req: Request, res: Response) => {
   res.status(200).send(response);
 });
 
-
 module.exports = router;

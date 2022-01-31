@@ -75,6 +75,10 @@ router.get('/github', (req: Request, res: Response) => {
   res.sendFile(path.join(__dirname + '/views/github.html'));
 });
 
+router.get('/util', (req: Request, res: Response) => {
+  res.sendFile(path.join(__dirname + '/views/util.html'));
+});
+
 const githubController = require('./routes/github');
 app.use('/github', githubController);
 
@@ -89,6 +93,9 @@ app.use('/spotify', spotifyController);
 
 const stocktwitsController = require('./routes/stocktwits');
 app.use('/stocktwits', stocktwitsController);
+
+const utilController = require('./routes/util');
+app.use('/util', utilController);
 
 app.use((req, res, next) => {
   next(createError(404));
