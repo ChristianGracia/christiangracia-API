@@ -26,7 +26,7 @@ describe('Render Spotify End to End Tests', () => {
     });
   
     
-    it(`GET recently played returns songs after login`, async () => {
+    it(`GET recently played returns songs after spotify`, async () => {
       const data = await page.evaluate(() => document.querySelector('body').innerText);
       
       const dataArray = JSON.parse(data);
