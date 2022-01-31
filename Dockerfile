@@ -1,19 +1,27 @@
-FROM node:14-alpine3.10 as ts-compiler
-WORKDIR /usr/app
+# STAGE 1
+FROM node:12-alpine as builder
+RUN mkdir -p /home/node/app/node_modules && chown -R node:node /home/node/app
+WORKDIR /home/node/app
 COPY package*.json ./
-COPY tsconfig*.json ./
+COPY .env ./
+COPY src/views/ ./build/src/views
+RUN npm config set unsafe-perm true
+RUN npm install -g typescript
+RUN npm install -g ts-node
+USER node
 RUN npm install
-COPY . ./
+COPY --chown=node:node . .
 RUN npm run build
 
-FROM node:14-alpine3.10 as ts-remover
-WORKDIR /usr/app
-COPY --from=ts-compiler /usr/app/package*.json ./
-COPY --from=ts-compiler /usr/app/build ./
-RUN npm install --only=production
+# STAGE 2
+FROM node:12-alpine
+RUN mkdir -p /home/node/app/node_modules && chown -R node:node /home/node/app
+WORKDIR /home/node/app
+COPY package*.json ./
+COPY .env ./
+USER node
 
-FROM gcr.io/distroless/nodejs:14
-WORKDIR /usr/app
-COPY --from=ts-remover /usr/app ./
-USER 1000
-CMD ["server.js"]
+RUN npm install --production
+COPY --from=builder /home/node/app/build ./build
+
+CMD [ "node", "build/src/server.js" ]
