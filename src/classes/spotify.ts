@@ -65,7 +65,6 @@ export class Spotify {
                         const state = 'dkedkekdekdked';
                         const scope = 'user-read-private user-read-email user-read-currently-playing user-read-recently-played';
                         const browserOptions = {
-                            dumpio: true,
                             headless: true,
                             ignoreHTTPSErrors: true,
                             args: ['--no-sandbox', '--disable-setuid-sandbox'],
@@ -85,8 +84,12 @@ export class Spotify {
                                 redirect_uri: this.redirect_uri,
                                 state: state,
                                 }), 
-                                // {waitUntil: 'networkidle2'}
+                                {waitUntil: 'networkidle2'}
                             );
+                            await page.setViewport({
+                                width: 1000,
+                                height: 800
+                            })
                             Logger.info(`--------------------- page start ${utilService.timePassed(startTime)}---------------------`);
                             await page.waitForTimeout(utilService.randonNumberInRange(1300, 2000));
                             Logger.info(`--------------------- after 2.5 second ${utilService.timePassed(startTime)}---------------------`);
