@@ -81,7 +81,7 @@ export class Spotify {
             const scope =
               'user-read-private user-read-email user-read-currently-playing user-read-recently-played';
             const browserOptions = {
-              dumpi: !env,
+              dumpio: !env,
               headless: env,
               ignoreHTTPSErrors: true,
               args: ['--no-sandbox', '--disable-setuid-sandbox'],
