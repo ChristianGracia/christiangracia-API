@@ -3,8 +3,6 @@ FROM node:12-alpine as builder
 RUN mkdir -p /home/node/app/node_modules && chown -R node:node /home/node/app
 WORKDIR /home/node/app
 COPY package*.json ./
-COPY .env ./
-COPY src/views/ ./build/src/views
 RUN npm config set unsafe-perm true
 RUN npm install -g typescript
 RUN npm install -g ts-node
@@ -22,6 +20,9 @@ ENV NODE_ENV=production
 WORKDIR /home/node/app
 COPY package*.json ./
 COPY .env ./
+COPY src/files/ ./build/src/files
+COPY src/assets/ ./build/src/assets
+COPY src/views/ ./build/src/views
 USER node
 
 RUN npm install --production

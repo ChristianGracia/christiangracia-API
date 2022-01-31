@@ -41,19 +41,22 @@ export const utilService = {
   },
   /**
    * Converts files read as strings to html
-   * @param { string } data - string data read from a file
+   * @param { string } fileName - File name to be read as string
+   * @param { string } cssFileName - file name off CSS file for created HTML
    */
-  parseCodeFileToHtml: async function (file: string, cssFilePath: string) {
-    const html2 = await this.readFile('src/classes/spotify.ts');
+  parseCodeFileToHtml: async function (fileName: string, cssFileName: string) {
+    const production = process.env.NODE_ENV === 'production' ? 'build/' : '';
+    const htmlFromFile = await this.readFile(`${production}src/files/${fileName}`);
 
-    // const supportedLanguages = { 'ts': 'typescript' };
-    // const fileArr = file.toString().split(".");
-    // const fileType = fileArr[fileArr.length - 1];
-    // if (!Object.keys(supportedLanguages).includes(fileType)) {
-    //     return { status: 400, data: 'Unsupported file type language' };
-    // }
+    const supportedLanguages = { 'ts': 'typescript' };
+    const fileArr = fileName.toString().split(".");
+    const fileType = fileArr[fileArr.length - 1];
+    if (!Object.keys(supportedLanguages).includes(fileType)) {
+        return { status: 400, data: 'Unsupported file type language' };
+    }
+    const language = supportedLanguages[fileType];
 
-    if (html2) {
+    if (htmlFromFile) {
       const htmlString = `
         <!DOCTYPE html>
         <html lang="en" dir="ltr">
@@ -67,26 +70,20 @@ export const utilService = {
         <link rel="stylesheet" href='src/assets/code-snippet.css'>
         </head>
         <body>
-        <pre id='code-div'><code lang="typescript">${
-          hljs.highlight(html2, { language: 'typescript' }).value
+        <pre id='code-div'><code lang=${language}>${
+          hljs.highlight(htmlFromFile, { language }).value
         }</code></pre>
         </body>
         </html>
         `;
-      // return await htmlString;
-      return inlineCss(htmlString, {
-        url:
-          'file://' +
-          __dirname +
-          '/' +
-          path.dirname('../../code-snippet.css') +
-          '/',
-      }).then(function (html: string) {
+
+      const url = `file://${__dirname}/${path.dirname(`../../${cssFileName}`)}/`;
+      return inlineCss(htmlString, { url }).then(function (html: string) {
         const startIndex = html.indexOf('<pre');
         const endIndex = html.indexOf('</pre>') + 6;
-        return html.slice(startIndex, endIndex);
+        return { status: 200, data: html.slice(startIndex, endIndex)};
       });
     }
-    return { status: 400, data: 'Error big errorinline css' };
+    return { status: 400, data: 'Error creating html' };
   },
 };

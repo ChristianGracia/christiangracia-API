@@ -32,3 +32,5 @@ build/
 
 sql-scripts/cp1.sql
 sql-scripts/cu1.sql
+
+src/files/*

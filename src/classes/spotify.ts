@@ -4,7 +4,6 @@ import querystring from 'querystring';
 import Logger from '../config/winston';
 import { utilService } from '../services/util-service';
 import Constants from '../config/constants';
-// const Constants = require('../config/constants')
 
 const env = process.env.NODE_ENV === 'production';
 export class Spotify {
@@ -78,10 +77,12 @@ export class Spotify {
               `---------------------puppeteer starting | headless ${env}---------------------`,
             );
             const state = 'dkedkekdekdked';
+
             const scope =
               'user-read-private user-read-email user-read-currently-playing user-read-recently-played';
             const browserOptions = {
               headless: env,
+              dumpio: true,
               ignoreHTTPSErrors: true,
               args: ['--no-sandbox', '--disable-setuid-sandbox'],
               userAgent:
@@ -91,7 +92,7 @@ export class Spotify {
               }),
             };
             const browser = await puppeteer.launch(browserOptions);
-
+            console.log('here')
             try {
               const page = await browser.newPage();
               await page.goto(
@@ -114,7 +115,7 @@ export class Spotify {
                 utilService.randonNumberInRange(1300, 2000),
               );
               Logger.info(
-                `--------------------- after 2.5 second ${utilService.timePassed(
+                `--------------------- after pause ${utilService.timePassed(
                   startTime,
                 )}---------------------`,
               );
@@ -175,7 +176,7 @@ export class Spotify {
                     startTime,
                   )}---------------------`,
                 );
-                await browser.close();
+
                 Logger.warn(
                   `---------------------puppeteer closed ${utilService.timePassed(
                     startTime,
@@ -183,8 +184,8 @@ export class Spotify {
                 );
               } catch {
                 await this.sendEmail('auth login', 'Password Error');
-                await browser.close();
               }
+              await browser.close();
             } catch (err) {
               console.log(err);
               Logger.error(
