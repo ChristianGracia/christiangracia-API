@@ -3,9 +3,12 @@ import puppeteer from 'puppeteer';
 import querystring from 'querystring';
 import Logger from '../config/winston';
 import { utilService } from '../services/util-service';
+import Constants from '../config/constants';
+// const Constants = require('../config/constants')
 
+const env = process.env.NODE_ENV === 'production';
 export class Spotify {
-  public spotifyUrl: string = 'https://accounts.spotify.com/api/token';
+  public spotifyUrl: string = Constants.SPOTIFY_TOKEN
   public access_token: string = '';
   public refresh_token: string = '';
   public client_id: string = '';
@@ -71,7 +74,6 @@ export class Spotify {
       promises.push(
         new Promise((resolve) => {
           (async () => {
-            const env = process.env.NODE_ENV === 'production';
             Logger.warn(
               `---------------------puppeteer starting | headless ${env}---------------------`,
             );
@@ -93,7 +95,7 @@ export class Spotify {
             try {
               const page = await browser.newPage();
               await page.goto(
-                'https://accounts.spotify.com/authorize?' +
+                  Constants.SPOTIFY_AUTH +
                   querystring.stringify({
                     response_type: 'code',
                     client_id: this.client_id,
@@ -162,21 +164,27 @@ export class Spotify {
                 )}---------------------`,
               );
               await page.waitForTimeout(5000);
-              await page.waitForXPath('//*[contains(text(), "token")]', {
-                visible: true,
-              });
-              await page.waitForTimeout(3000);
-              Logger.info(
-                `--------------------- success ${utilService.timePassed(
-                  startTime,
-                )}---------------------`,
-              );
-              await browser.close();
-              Logger.warn(
-                `---------------------puppeteer closed ${utilService.timePassed(
-                  startTime,
-                )}---------------------`,
-              );
+
+              try {
+                await page.waitForXPath('//*[contains(text(), "token")]', {
+                  visible: true,
+                });
+                await page.waitForTimeout(3000);
+                Logger.info(
+                  `--------------------- success ${utilService.timePassed(
+                    startTime,
+                  )}---------------------`,
+                );
+                await browser.close();
+                Logger.warn(
+                  `---------------------puppeteer closed ${utilService.timePassed(
+                    startTime,
+                  )}---------------------`,
+                );
+              } catch {
+                await this.sendEmail('auth login', 'Password Error');
+                await browser.close();
+              }
             } catch (err) {
               console.log(err);
               Logger.error(
@@ -201,7 +209,6 @@ export class Spotify {
       );
       return {
         access_token: this.access_token,
-        email_sent: await this.sendEmail('puppeteer script'),
       };
     } catch (err) {
       this.puppeteerRunning = false;
@@ -277,17 +284,17 @@ export class Spotify {
       return { Error: 'Error retrieving token using authorization code' };
     }
   };
-  sendEmail = async (jobType) => {
+  sendEmail = async (jobType, message) => {
     Logger.warn('--------------------- sending email ---------------------');
-    const body = {
+    const data = {
       jobType: `${jobType}`,
-      message: `${jobType} ran`,
+      message: `${message}`,
     };
 
     const res = await axios({
-      url: 'https://christiangracia-api.herokuapp.com/email/job-ran',
+      url: env ? 'https://christiangracia-api.herokuapp.com/email/job-ran' : 'http://localhost:3000/email/job-ran',
       method: 'post',
-      params: body,
+      data,
     });
     if (res.status === 200) {
       console.warn(
@@ -295,7 +302,7 @@ export class Spotify {
       );
       return res.data;
     } else {
-      return { Error: 'Error sending email ' };
+      return { Error: 'Error sending email' };
     }
   };
   getCurrentlyPlaying = async () => {
@@ -305,7 +312,7 @@ export class Spotify {
     }
 
     return await axios({
-      url: 'https://api.spotify.com/v1/me/player/currently-playing',
+      url: Constants.SPOTIFY_CURRENT_SONG,
       method: 'get',
       headers: {
         Authorization: 'Bearer ' + this.access_token,
@@ -321,7 +328,7 @@ export class Spotify {
     }
 
     return await axios({
-      url: 'https://api.spotify.com/v1/me/player/recently-played?limit=50',
+      url: Constants.SPOTIFY_RECENTLY_PLAYED,
       method: 'get',
       headers: {
         Authorization: 'Bearer ' + this.access_token,

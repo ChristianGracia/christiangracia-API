@@ -18,14 +18,14 @@ const spotify = new Spotify(
   redirect_uri,
 );
 
-router.get('/currently-playing', async function (req, res) {
+router.get('/currently-playing', async (req: Request, res: Response) => {
   const response = await spotify.getCurrentlyPlaying();
   res
     .status(response.status)
     .send(response.data ? spotifyService.formatCurrentSong(response.data) : []);
 });
 
-router.get('/recently-played', async function (req, res) {
+router.get('/recently-played', async (req: Request, res: Response) => {
   const response = await spotify.getRecentlyPlayed();
   res
     .status(response.status)
@@ -36,7 +36,7 @@ router.get('/recently-played', async function (req, res) {
     );
 });
 
-router.get('/callback', async function (req, res) {
+router.get('/callback', async (req: Request, res: Response) => {
   const code = req.query.code;
   await spotify.useAuthCodeToken(code);
   res
