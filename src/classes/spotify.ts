@@ -81,8 +81,8 @@ export class Spotify {
             const scope =
               'user-read-private user-read-email user-read-currently-playing user-read-recently-played';
             const browserOptions = {
+              dumpi: !env,
               headless: env,
-              dumpio: true,
               ignoreHTTPSErrors: true,
               args: ['--no-sandbox', '--disable-setuid-sandbox'],
               userAgent:
@@ -92,7 +92,6 @@ export class Spotify {
               }),
             };
             const browser = await puppeteer.launch(browserOptions);
-            console.log('here')
             try {
               const page = await browser.newPage();
               await page.goto(
@@ -188,6 +187,7 @@ export class Spotify {
               await browser.close();
             } catch (err) {
               console.log(err);
+              this.puppeteerRunning = false;
               Logger.error(
                 `--------------------- puppeteer error ${utilService.timePassed(
                   startTime,

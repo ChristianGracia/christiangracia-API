@@ -67,7 +67,7 @@ export const utilService = {
         <head>
         <style>
         </style>
-        <link rel="stylesheet" href='src/assets/code-snippet.css'>
+        <link rel="stylesheet" href='src/assets/${cssFileName}'>
         </head>
         <body>
         <pre id='code-div'><code lang=${language}>${
@@ -77,8 +77,8 @@ export const utilService = {
         </html>
         `;
 
-      const url = `file://${__dirname}/${path.dirname(`../../${cssFileName}`)}/`;
-      return inlineCss(htmlString, { url }).then(function (html: string) {
+      const cssFilePath = `file://${__dirname}/${path.dirname(`../../${cssFileName}`)}/`;
+      return inlineCss(htmlString, { url: cssFilePath}).then(function (html: string) {
         const startIndex = html.indexOf('<pre');
         const endIndex = html.indexOf('</pre>') + 6;
         return { status: 200, data: html.slice(startIndex, endIndex)};

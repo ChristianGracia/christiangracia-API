@@ -41,7 +41,8 @@
     "push-p": "heroku container:push web --app christiangracia-api",
     "release-p": "heroku container:release web --app christiangracia-api",
     "push-s": "heroku container:push web --app christiangracia-api-staging",
-    "release-s": "heroku container:release web --app christiangracia-api-staging"
+    "release-s": "heroku container:release web --app christiangracia-api-staging",
+    "rebuild": "docker-compose down && docker-compose build && docker-compose up"
   },
   "author": "Christian Gracia",
   "license": "Apache-2.0",
