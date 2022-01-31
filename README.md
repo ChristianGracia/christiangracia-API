@@ -1,13 +1,29 @@
 # API back-end
 
-## Features
+This repo contains a Dockerized TypeScript NodeJs API that serves my website, scrapes sites, runs scripts, sends emails, and much more. Uses Jest for tests
 
-my API does...
+## Features
 
 **Emails**
 
-**Server side render images**
+**Server side render html/images**
 
-**Retrieval of my github repos using github API and formatting**
+**Github API integrations**
 
-**PostgreSQL DB**
+**Spotify API integrations**
+
+## Installation
+
+`npm i`
+
+`npm run dev`
+
+## Docker
+
+`docker-compose up`
+
+## Tests
+
+`npm run test`
+
+
