@@ -15,7 +15,6 @@ const spotify = new Spotify(client_id, client_secret, client_user, client_passwo
 
 router.get('/currently-playing', async function (req, res) {
   const response = await spotify.getCurrentlyPlaying();
-  console.log(response);
   res.status(response.status).send(response.data ? spotifyService.formatCurrentSong(response.data) : []);
 })
 

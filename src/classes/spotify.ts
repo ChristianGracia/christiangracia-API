@@ -61,15 +61,16 @@ export class Spotify {
             promises.push(
                 new Promise(resolve => {
                     (async () => {
-                        Logger.warn('---------------------puppeteer starting---------------------');
+                        const env = process.env.NODE_ENV === 'production';
+                        Logger.warn(`---------------------puppeteer starting | headless ${env}---------------------`);
                         const state = 'dkedkekdekdked';
                         const scope = 'user-read-private user-read-email user-read-currently-playing user-read-recently-played';
                         const browserOptions = {
-                            headless: true,
+                            headless: env,
                             ignoreHTTPSErrors: true,
                             args: ['--no-sandbox', '--disable-setuid-sandbox'],
                             userAgent:
-                            'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/65.0.3312.0 Safari/537.36',
+                            'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/61.0.3163.100 Safari/537.36'
                         };
                         const browser = await puppeteer.launch(browserOptions);
                         
@@ -78,18 +79,13 @@ export class Spotify {
                             await page.goto(
                             'https://accounts.spotify.com/authorize?' +
                                 querystring.stringify({
-                                response_type: 'code',
-                                client_id: this.client_id,
-                                scope: scope,
-                                redirect_uri: this.redirect_uri,
-                                state: state,
-                                }), 
-                                {waitUntil: 'networkidle2'}
+                                    response_type: 'code',
+                                    client_id: this.client_id,
+                                    scope: scope,
+                                    redirect_uri: this.redirect_uri,
+                                    state: state,
+                                }), {waitUntil: 'networkidle2'}
                             );
-                            await page.setViewport({
-                                width: 1000,
-                                height: 800
-                            })
                             Logger.info(`--------------------- page start ${utilService.timePassed(startTime)}---------------------`);
                             await page.waitForTimeout(utilService.randonNumberInRange(1300, 2000));
                             Logger.info(`--------------------- after 2.5 second ${utilService.timePassed(startTime)}---------------------`);
