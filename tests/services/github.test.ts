@@ -54,10 +54,6 @@ describe('Render Github routes End to End Tests', () => {
         expect(message).toBeTruthy;
     });
   
-
-
-
-  
     afterAll(async () => {
       await browser.close();
       Logger.info(`--------------------- Finished Testing Github ---------------------`);
