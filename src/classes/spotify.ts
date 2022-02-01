@@ -83,7 +83,7 @@ export class Spotify {
                       args: ['--no-sandbox', '--disable-setuid-sandbox'],
                       userAgent:
                       'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/61.0.3163.100 Safari/537.36',
-                      ...(process.env.PUPPETEER_SKIP_CHROMIUM_DOWNLOAD && { executablePath: '/usr/bin/chromium-browser', ignoreDefaultArgs: ["--disable-extensions"], slowMo: 100 }),
+                      ...(process.env.PUPPETEER_SKIP_CHROMIUM_DOWNLOAD && { executablePath: '/usr/bin/chromium-browser', ignoreDefaultArgs: ["--disable-extensions"], slowMo: 25 }),
                   };
                   const browser = await puppeteer.launch(browserOptions);
                   
