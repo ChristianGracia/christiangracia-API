@@ -36,7 +36,7 @@
     "build:watch": "tsc -w -p tsconfig.release.json",
     "test": "jest --config jest.config.json --runInBand",
     "test:watch": "jest --watch",
-    "format": "prettier --write \"*.ts\"",
+    "format": "prettier --write .",
     "lint": "tslint -p tsconfig.json",
     "push-p": "heroku container:push web --app christiangracia-api",
     "release-p": "heroku container:release web --app christiangracia-api",

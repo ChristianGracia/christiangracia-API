@@ -25,5 +25,3 @@ This repo contains a Dockerized TypeScript NodeJs API that serves my website, sc
 ## Tests
 
 `npm run test`
-
-

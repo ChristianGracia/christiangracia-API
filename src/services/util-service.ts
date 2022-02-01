@@ -46,13 +46,15 @@ export const utilService = {
    */
   parseCodeFileToHtml: async function (fileName: string, cssFileName: string) {
     const production = process.env.NODE_ENV === 'production' ? 'build/' : '';
-    const htmlFromFile = await this.readFile(`${production}src/files/${fileName}`);
+    const htmlFromFile = await this.readFile(
+      `${production}src/files/${fileName}`,
+    );
 
-    const supportedLanguages = { 'ts': 'typescript' };
-    const fileArr = fileName.toString().split(".");
+    const supportedLanguages = { ts: 'typescript' };
+    const fileArr = fileName.toString().split('.');
     const fileType = fileArr[fileArr.length - 1];
     if (!Object.keys(supportedLanguages).includes(fileType)) {
-        return { status: 400, data: 'Unsupported file type language' };
+      return { status: 400, data: 'Unsupported file type language' };
     }
     const language = supportedLanguages[fileType];
 
@@ -71,17 +73,21 @@ export const utilService = {
         </head>
         <body>
         <pre id='code-div'><code lang=${language}>${
-          hljs.highlight(htmlFromFile, { language }).value
-        }</code></pre>
+        hljs.highlight(htmlFromFile, { language }).value
+      }</code></pre>
         </body>
         </html>
         `;
 
-      const cssFilePath = `file://${__dirname}/${path.dirname(`../../${cssFileName}`)}/`;
-      return inlineCss(htmlString, { url: cssFilePath}).then(function (html: string) {
+      const cssFilePath = `file://${__dirname}/${path.dirname(
+        `../../${cssFileName}`,
+      )}/`;
+      return inlineCss(htmlString, { url: cssFilePath }).then(function (
+        html: string,
+      ) {
         const startIndex = html.indexOf('<pre');
         const endIndex = html.indexOf('</pre>') + 6;
-        return { status: 200, data: html.slice(startIndex, endIndex)};
+        return { status: 200, data: html.slice(startIndex, endIndex) };
       });
     }
     return { status: 400, data: 'Error creating html' };
