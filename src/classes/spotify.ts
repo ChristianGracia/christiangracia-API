@@ -71,133 +71,66 @@ export class Spotify {
       const promises = [];
       const startTime = new Date().getTime();
       promises.push(
-        new Promise((resolve) => {
-          (async () => {
-            Logger.warn(
-              `---------------------puppeteer starting | headless ${env}---------------------`,
-            );
-            const state = 'dkedkekdekdked';
-
-            const scope =
-              'user-read-private user-read-email user-read-currently-playing user-read-recently-played';
-            const browserOptions = {
-              dumpio: !env,
-              headless: env,
-              ignoreHTTPSErrors: true,
-              args: ['--no-sandbox', '--disable-setuid-sandbox'],
-              userAgent:
-                'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/61.0.3163.100 Safari/537.36',
-              ...(process.env.PUPPETEER_SKIP_CHROMIUM_DOWNLOAD && {
-                executablePath: '/usr/bin/chromium-browser',
-              }),
-            };
-            const browser = await puppeteer.launch(browserOptions);
-            try {
-              const page = await browser.newPage();
-              await page.goto(
-                  Constants.SPOTIFY_AUTH +
-                  querystring.stringify({
-                    response_type: 'code',
-                    client_id: this.client_id,
-                    scope: scope,
-                    redirect_uri: this.redirect_uri,
-                    state: state,
-                  }),
-                { waitUntil: 'networkidle2' },
-              );
-              Logger.info(
-                `--------------------- page start ${utilService.timePassed(
-                  startTime,
-                )}---------------------`,
-              );
-              await page.waitForTimeout(
-                utilService.randonNumberInRange(1300, 2000),
-              );
-              Logger.info(
-                `--------------------- after pause ${utilService.timePassed(
-                  startTime,
-                )}---------------------`,
-              );
-              await page.waitForSelector('input[id=login-username]', {
-                visible: true,
-              });
-              await page.waitForTimeout(
-                utilService.randonNumberInRange(500, 1000),
-              );
-              await page.type('input[id=login-username]', this.client_user);
-              Logger.info(
-                `--------------------- username done ${utilService.timePassed(
-                  startTime,
-                )}---------------------`,
-              );
-              await page.waitForSelector('input[id=login-password]', {
-                visible: true,
-              });
-              await page.waitForTimeout(
-                utilService.randonNumberInRange(500, 1000),
-              );
-              await page.type('input[id=login-password]', this.client_password);
-              Logger.info(
-                `--------------------- password done ${utilService.timePassed(
-                  startTime,
-                )}---------------------`,
-              );
-              await page.waitForXPath('//*[@id="login-button"]', {
-                visible: true,
-              });
-              Logger.info(
-                `--------------------- login button found ${utilService.timePassed(
-                  startTime,
-                )}---------------------`,
-              );
-              const submitButton = await page.$x('//*[@id="login-button"]');
-              await page.waitForTimeout(
-                utilService.randonNumberInRange(1000, 1500),
-              );
-              await submitButton[0].click();
-              await page.waitForTimeout(
-                utilService.randonNumberInRange(1000, 2000),
-              );
-              Logger.info(
-                `--------------------- login button clicked ${utilService.timePassed(
-                  startTime,
-                )}---------------------`,
-              );
-              await page.waitForTimeout(5000);
-
-              try {
-                await page.waitForXPath('//*[contains(text(), "token")]', {
-                  visible: true,
-                });
-                await page.waitForTimeout(3000);
-                Logger.info(
-                  `--------------------- success ${utilService.timePassed(
-                    startTime,
-                  )}---------------------`,
-                );
-
-                Logger.warn(
-                  `---------------------puppeteer closed ${utilService.timePassed(
-                    startTime,
-                  )}---------------------`,
-                );
-              } catch {
-                await this.sendEmail('auth login', 'Password Error');
-              }
-              await browser.close();
-            } catch (err) {
-              console.log(err);
-              this.puppeteerRunning = false;
-              Logger.error(
-                `--------------------- puppeteer error ${utilService.timePassed(
-                  startTime,
-                )} ---------------------`,
-              );
-              await browser.close();
-            }
-            resolve(true);
-          })();
-        }),
+          new Promise(resolve => {
+              (async () => {
+                  const env = process.env.NODE_ENV === 'production';
+                  Logger.warn(`---------------------puppeteer starting | headless ${env}---------------------`);
+                  const state = 'dkedkekdekdked';
+                  const scope = 'user-read-private user-read-email user-read-currently-playing user-read-recently-played';
+                  const browserOptions = {
+                      headless: env,
+                      ignoreHTTPSErrors: true,
+                      args: ['--no-sandbox', '--disable-setuid-sandbox'],
+                      userAgent:
+                      'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/61.0.3163.100 Safari/537.36',
+                      ...(process.env.PUPPETEER_SKIP_CHROMIUM_DOWNLOAD && { executablePath: '/usr/bin/chromium-browser', ignoreDefaultArgs: ["--disable-extensions"], slowMo: 100 }),
+                  };
+                  const browser = await puppeteer.launch(browserOptions);
+                  
+                  try {
+                      const page = await browser.newPage();
+                      await page.goto(
+                      'https://accounts.spotify.com/authorize?' +
+                          querystring.stringify({
+                              response_type: 'code',
+                              client_id: this.client_id,
+                              scope: scope,
+                              redirect_uri: this.redirect_uri,
+                              state: state,
+                          }), {waitUntil: 'networkidle2'}
+                      );
+                      Logger.info(`--------------------- page start ${utilService.timePassed(startTime)}---------------------`);
+                      await page.waitForTimeout(utilService.randonNumberInRange(1300, 2000));
+                      Logger.info(`--------------------- after 2.5 second ${utilService.timePassed(startTime)}---------------------`);
+                      await page.waitForSelector('input[id=login-username]', {visible: true})
+                      await page.waitForTimeout(utilService.randonNumberInRange(500, 1000));
+                      await page.type('input[id=login-username]', this.client_user);
+                      Logger.info(`--------------------- username done ${utilService.timePassed(startTime)}---------------------`);
+                      await page.waitForSelector('input[id=login-password]', {visible: true})
+                      await page.waitForTimeout(utilService.randonNumberInRange(500, 1000));
+                      await page.type('input[id=login-password]', this.client_password);
+                      Logger.info(`--------------------- password done ${utilService.timePassed(startTime)}---------------------`);
+                      await page.waitForXPath('//*[@id="login-button"]', {visible: true});
+                      Logger.info(`--------------------- login button found ${utilService.timePassed(startTime)}---------------------`);
+                      const submitButton = await page.$x('//*[@id="login-button"]');
+                      await page.waitForTimeout(utilService.randonNumberInRange(1000, 1500));
+                      await submitButton[0].click();
+                      await page.waitForTimeout(utilService.randonNumberInRange(1000, 2000));
+                      Logger.info(`--------------------- login button clicked ${utilService.timePassed(startTime)}---------------------`);
+                      await page.waitForTimeout(5000);
+                      await page.waitForXPath('//*[contains(text(), "token")]', {visible: true});
+                      await page.waitForTimeout(3000);
+                      Logger.info(`--------------------- success ${utilService.timePassed(startTime)}---------------------`);
+                      await browser.close();
+                      Logger.warn(`---------------------puppeteer closed ${utilService.timePassed(startTime)}---------------------`);
+                  } catch (err) {
+                      console.log(err)
+                      Logger.error(`--------------------- puppeteer error ${utilService.timePassed(startTime)} ---------------------`);
+                      await browser.close();
+                  }
+                  resolve(true);
+              })();
+          })
       );
       await Promise.all(promises);
 
@@ -213,6 +146,7 @@ export class Spotify {
       };
     } catch (err) {
       this.puppeteerRunning = false;
+      this.sendEmail('Auth', 'Password Error');
       Logger.error(
         '--------------------- puppeteer error ---------------------',
       );
