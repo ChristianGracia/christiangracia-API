@@ -6,13 +6,13 @@ import * as dotenv from 'dotenv';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
 import createError from 'http-errors';
-import morganMiddleware from './config/morgan'
-import Logger from "./config/winston";
+import morganMiddleware from './config/morgan';
+import Logger from './config/winston';
 
 dotenv.config();
 
 const app = express();
-app.use(morganMiddleware)
+app.use(morganMiddleware);
 
 const router = express.Router();
 app.use(router);

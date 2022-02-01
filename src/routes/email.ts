@@ -70,9 +70,8 @@ router.post('/site-visit', (req: Request, res: Response) => {
 router.post('/job-ran', (req: Request, res: Response) => {
   const { jobType, message } = req.body;
   const emailTitle = `christiangracia.com - Job | ${jobType} | ${new Date().toISOString()}`;
-
   cgMailer
-    .send(CG_EMAIL, emailTitle, emailService.createCgEmail('', '', message))
+    .send(CG_EMAIL, emailTitle, emailService.createCgEmail(emailTitle, jobType, message))
     .then(() => res.status(200).send({ 'job-ran': true, 'job-type': jobType }))
     .catch((error) => res.status(500).send(error));
 });
