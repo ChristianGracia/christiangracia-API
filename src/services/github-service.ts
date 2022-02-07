@@ -21,7 +21,6 @@ export const githubService = {
       'christiangracia.com4.0',
       'Algorithms',
       'christiangracia-API',
-      'Java',
       'Harvard-cs50',
     ];
     const importantLanguages = ['C', 'C#', 'Python', 'Java', 'Kotlin'];
