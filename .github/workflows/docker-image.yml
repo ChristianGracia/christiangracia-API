@@ -2,18 +2,16 @@ name: Docker Image CI
 
 on:
   push:
-    branches: [ master ]
+    branches: [master]
   pull_request:
-    branches: [ master ]
+    branches: [master]
 env:
   HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
 jobs:
-
   build:
-
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v2
-    - name: Build the Docker image
-      run: heroku container:push web --app christiangracia-staging && heroku container:release web --app christiangracia-staging
+      - uses: actions/checkout@v2
+      - name: Build the Docker image
+        run: docker login -u _ -p $HEROKU_API_KEY registry.heroku.com && heroku container:push web --app christiangracia-api-staging && heroku container:release web --app christiangracia-api-staging

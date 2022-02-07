@@ -21,10 +21,9 @@ export const githubService = {
       'christiangracia.com4.0',
       'Algorithms',
       'christiangracia-API',
-      'Java',
       'Harvard-cs50',
     ];
-    const importantLanguages = ['C', 'C#', 'Python', 'Java'];
+    const importantLanguages = ['C', 'C#', 'Python', 'Java', 'Kotlin'];
 
     for (const repo of sortedRepos) {
       const { language, name } = repo;
@@ -65,13 +64,14 @@ export const githubService = {
    */
   formatRepos: function (repos: any[]): any[] {
     return this.sortRepos(
-      repos.map((repo: any) => {
+      repos.filter((repo) => repo.name !== 'ChristianGracia').map((repo: any) => {
         return {
           url: repo.html_url,
           description: repo.description,
           name: repo.name,
           language: repo.language,
           updatedAt: repo.updated_at,
+          topics: repo.topics,
         };
       }),
     );
