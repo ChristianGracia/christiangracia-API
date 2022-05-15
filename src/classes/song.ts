@@ -11,7 +11,7 @@ export class Song {
     description: string,
     name: string,
     language: string,
-    topics,
+    topics: string,
   ) {
     this.url = html_url;
     this.updatedAt = updated_at;
