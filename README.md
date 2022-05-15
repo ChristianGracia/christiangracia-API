@@ -12,7 +12,7 @@ This repo contains a Dockerized TypeScript NodeJs API that serves my website, sc
 
 **Spotify API integrations**
 
-**Github CI - Auto build and deploy containers to staging on merge to master
+\*\*Github CI - Auto build and deploy containers to staging on merge to master
 
 **More**
 

@@ -1,22 +1,25 @@
+import { Commit } from '../classes/commit';
+import { repo, Repo } from '../classes/repo';
+
 export const githubService = {
   /**
-   * sort repos github repos by first update time and then unique language used
+   * Sort repos github repos by first update time and then unique language used
    * @param { * } sortRepos - repos to be sorted
    */
   sortRepos: (repos: any[]): any[] => {
     const sortedRepos = repos.sort(function (a, b) {
-      return a.updatedAt > b.updatedAt ? -1 : a.updatedAt < b.updatedAt ? 1 : 0;
+      return a.updatedAt > b.updatedAt ? -1 : 1;
     });
 
     const comp = {};
 
-    const uniqueLangugeRepos = [];
+    const uniqueLanguageRepos = [];
     const dupes = [];
     const boringRepos = [];
     const starRepos = [];
     const importantLanguageRepos = [];
 
-    const boringNames = ['onabeat.com'];
+    const boringNames = ['onabeat.com', 'ChristianGracia'];
     const starRepoNames = [
       'christiangracia.com4.0',
       'Algorithms',
@@ -44,14 +47,14 @@ export const githubService = {
             boringRepos.push(repo);
           } else {
             comp[language] = language;
-            uniqueLangugeRepos.push(repo);
+            uniqueLanguageRepos.push(repo);
           }
         }
       }
     }
     const weightedRepos = [
       ...starRepos,
-      ...uniqueLangugeRepos,
+      ...uniqueLanguageRepos,
       ...importantLanguageRepos,
       ...dupes,
       ...boringRepos,
@@ -60,19 +63,12 @@ export const githubService = {
   },
   /**
    * Get all github repos
-   * @param { * } repos - repos received from github API
+   * @param { repo } repos - repos received from github API
    */
-  formatRepos: function (repos: any[]): any[] {
+  formatRepos: function (repos: repo[]): Repo[] {
     return this.sortRepos(
-      repos.filter((repo) => repo.name !== 'ChristianGracia').map((repo: any) => {
-        return {
-          url: repo.html_url,
-          description: repo.description,
-          name: repo.name,
-          language: repo.language,
-          updatedAt: repo.updated_at,
-          topics: repo.topics,
-        };
+      repos.map((repo: repo) => {
+        return new Repo(repo);
       }),
     );
   },
@@ -81,12 +77,14 @@ export const githubService = {
    * @param { * } repo - selected repo to view commits from
    */
   formatCommits: (repo: any[]): any[] => {
-    return repo.map((commit: any) => {
-      return {
-        time: commit.commit.author.date,
-        message: commit.commit.message,
-        url: commit.html_url,
-      };
+    return repo.map((commitData: any) => {
+      const { commit, html_url } = commitData;
+
+      return new Commit({
+        author: commit.author.date,
+        message: commit.message,
+        html_url,
+      });
     });
   },
 };

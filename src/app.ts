@@ -97,6 +97,9 @@ app.use('/stocktwits', stocktwitsController);
 const utilController = require('./routes/util');
 app.use('/util', utilController);
 
+const renderHtmlController = require('./routes/render-html');
+app.use('/render-html', renderHtmlController);
+
 app.use((req, res, next) => {
   next(createError(404));
 });
