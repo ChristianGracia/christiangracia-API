@@ -69,7 +69,7 @@ export const utilService = {
         <head>
         <style>
         </style>
-        <link rel="stylesheet" href='src/assets/${cssFileName}'>
+        <link rel="stylesheet" href='src/assets/css/${cssFileName}'>
         </head>
         <body>
         <pre id='code-div'><code lang=${language}>${
