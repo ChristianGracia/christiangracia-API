@@ -1,7 +1,7 @@
 import { Song } from '../classes/song';
 
 const imageUrlStringReduceLength = 24;
-const previewUrlStringReduceLength = 24;
+const previewUrlStringReduceLength = 30;
 
 export const spotifyService = {
   /**
@@ -17,8 +17,8 @@ export const spotifyService = {
       duration_ms,
       artist: artists[0].name,
       name,
+      preview_url: preview_url.substr(previewUrlStringReduceLength) ?? '',
       images: [images[0]['url'].substr(imageUrlStringReduceLength)] ?? [],
-      preview_url: preview_url.substr(previewUrlStringReduceLength),
     });
   },
 
@@ -35,7 +35,7 @@ export const spotifyService = {
         artist: artists[0]?.name ?? '',
         name,
         played_at,
-        preview_url: preview_url.substr(previewUrlStringReduceLength),
+        preview_url: preview_url.substr(previewUrlStringReduceLength) ?? '',
         images:
           [album.images[0]['url'].substr(imageUrlStringReduceLength)] ?? [],
       });
