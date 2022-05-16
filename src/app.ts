@@ -79,6 +79,10 @@ router.get('/util', (req: Request, res: Response) => {
   res.sendFile(path.join(__dirname + '/views/util.html'));
 });
 
+router.get('/test', (req: Request, res: Response) => {
+  res.sendFile(path.join(__dirname + '/views/test.html'));
+});
+
 const githubController = require('./routes/github');
 app.use('/github', githubController);
 
@@ -96,6 +100,9 @@ app.use('/stocktwits', stocktwitsController);
 
 const utilController = require('./routes/util');
 app.use('/util', utilController);
+
+const testController = require('./routes/test');
+app.use('/test', testController);
 
 const renderHtmlController = require('./routes/render-html');
 app.use('/render-html', renderHtmlController);
