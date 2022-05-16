@@ -1,23 +1,38 @@
+export type song = {
+  progress_ms?: number;
+  duration_ms?: number;
+  artist?: string;
+  name?: string;
+  images?: string[];
+  preview_url?: string;
+  played_at?: string;
+};
 export class Song {
-  public url: string = '';
-  public updatedAt: string = '';
-  public description: string = '';
+  public progress: number = 0;
+  public duration: number = 0;
+  public artist: string = '';
   public name: string = '';
-  public language: string = '';
-  public topics: string = '';
-  constructor(
-    html_url: string,
-    updated_at: string,
-    description: string,
-    name: string,
-    language: string,
-    topics: string,
-  ) {
-    this.url = html_url;
-    this.updatedAt = updated_at;
-    this.description = description;
+  public images: string[] = [];
+  public previewUrl: string = '';
+  public playedAt: string = '';
+
+  constructor(songData: song) {
+    const {
+      progress_ms,
+      duration_ms,
+      artist,
+      name,
+      images,
+      preview_url,
+      played_at,
+    } = songData;
+
+    this.progress = progress_ms;
+    this.duration = duration_ms;
+    this.artist = artist;
     this.name = name;
-    this.language = language;
-    this.topics = topics;
+    this.images = images;
+    this.previewUrl = preview_url;
+    this.playedAt = played_at;
   }
 }

@@ -1,6 +1,7 @@
 import express, { Request, Response } from 'express';
 import { spotifyService } from '../services/spotify-service';
 import { Spotify } from '../classes/spotify';
+import { Test } from '../classes/test';
 
 const router = express.Router();
 
@@ -57,6 +58,42 @@ router.get('/use-code', async (req: Request, res: Response) => {
 router.get('/reset', async (req: Request, res: Response) => {
   const response = await spotify.handleTokenError();
   res.status(200).send(response);
+});
+
+router.get('/test/raw-current-song', async (req: Request, res: Response) => {
+  const response = await spotify.getCurrentlyPlaying();
+  res.status(response.status).send(response.data ?? []);
+});
+
+router.get('/test/raw-recently-played', async (req: Request, res: Response) => {
+  const response = await spotify.getRecentlyPlayed();
+  res.status(response.status).send(response.data.items ?? []);
+});
+
+router.get('/test/current-song', async (req: Request, res: Response) => {
+  const apiTester = new Test();
+  const response = await apiTester.requestChristianGraciaAPI(
+    '/spotify/test/raw-current-song',
+    'get',
+  );
+  res
+    .status(response.status)
+    .send(response.data ? spotifyService.formatCurrentSong(response.data) : []);
+});
+
+router.get('/test/recently-played', async (req: Request, res: Response) => {
+  const apiTester = new Test();
+  const response = await apiTester.requestChristianGraciaAPI(
+    '/spotify/test/raw-recently-played',
+    'get',
+  );
+  res
+    .status(response.status)
+    .send(
+      response.data.items && response.data.items.length
+        ? spotifyService.formatRecentlyPlayed(response.data.items)
+        : [],
+    );
 });
 
 module.exports = router;
