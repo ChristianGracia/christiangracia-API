@@ -15,13 +15,30 @@
       }
 
       .card {
+        margin: 20px;
         box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
         transition: 0.3s;
         border-radius: 5px;
         /* 5px rounded corners */
-        max-width: 30%;
-        min-width: 280px;
-        padding: 20px 0;
+        /*max-width: 30%;*/
+        min-width: 270px;
+        padding: 20px
+      }
+
+      .container {
+        padding: 2px 16px;
+        display: flex;
+        flex-direction: column;
+        text-align: left;
+      }
+
+      .card-container {
+        margin: 20px;
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        justify-content: center;
+     
       }
     </style>
   </head>
@@ -46,7 +63,7 @@
       <div style="margin-top: 15px; margin-bottom: 15px;">
         <h3 style="font-weight: bold;"> Public Routes </h3>
       </div>
-      <div style="width: 90%; margin: 0 auto; display: flex; flex-direction: row; flex-wrap: wrap; justify-content: space-between">
+      <div class="card-container">
         <div class="card">
           <div class="container">
             <h4>
@@ -86,19 +103,16 @@
             </div>
           </div>
         </div>
-
         <div class="card">
           <div class="container">
             <h4>
               <b>/util</b>
             </h4>
             <div>
-              <a href="/util/show-file?file=spotify.ts&cssFile=code-snippet.css">/util/show-file</a>-->
+              <a href="/util/show-file?file=spotify.ts&cssFile=code-snippet.css">/util/show-file</a>
             </div>
-            
           </div>
         </div>
-
         <div class="card">
           <div class="container">
             <h4>
@@ -106,7 +120,6 @@
             </h4>
           </div>
         </div>
-
         <div class="card">
           <div class="container">
             <h4>
@@ -114,7 +127,6 @@
             </h4>
           </div>
         </div>
-
         <div class="card">
           <div class="container">
             <h4>
