@@ -19,15 +19,33 @@ const spotify = new Spotify(
   redirect_uri,
 );
 
-router.get('/currently-playing', async (req: Request, res: Response) => {
+router.get('/raw-current-song', async (req: Request, res: Response) => {
   const response = await spotify.getCurrentlyPlaying();
+  res.status(response.status).send(response.data ?? []);
+});
+
+router.get('/raw-recently-played', async (req: Request, res: Response) => {
+  const response = await spotify.getRecentlyPlayed();
+  res.status(response.status).send(response.data.items ?? []);
+});
+
+router.get('/current-song', async (req: Request, res: Response) => {
+  const apiTester = new Test();
+  const response = await apiTester.requestChristianGraciaAPI(
+    '/test/raw-current-song',
+    'get',
+  );
   res
     .status(response.status)
     .send(response.data ? spotifyService.formatCurrentSong(response.data) : []);
 });
 
 router.get('/recently-played', async (req: Request, res: Response) => {
-  const response = await spotify.getRecentlyPlayed();
+  const apiTester = new Test();
+  const response = await apiTester.requestChristianGraciaAPI(
+    '/test/raw-recently-played',
+    'get',
+  );
   res
     .status(response.status)
     .send(
@@ -36,28 +54,4 @@ router.get('/recently-played', async (req: Request, res: Response) => {
         : [],
     );
 });
-
-router.get('/callback', async (req: Request, res: Response) => {
-  const code = req.query.code;
-  await spotify.useAuthCodeToken(code);
-  res
-    .status(200)
-    .send('<html><body><div class="token">token</div></body></html>');
-});
-
-router.get('/refresh', async (req: Request, res: Response) => {
-  const response = await spotify.refreshToken();
-  res.status(200).send(response);
-});
-
-router.get('/use-code', async (req: Request, res: Response) => {
-  const response = await spotify.useAuthCodeToken(spotify.getCode());
-  res.status(200).send(response);
-});
-
-router.get('/reset', async (req: Request, res: Response) => {
-  const response = await spotify.handleTokenError();
-  res.status(200).send(response);
-});
-
 module.exports = router;

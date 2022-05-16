@@ -1,43 +1,44 @@
+import { Song } from '../classes/song';
+
+const imageUrlStringReduceLength = 24;
+const previewUrlStringReduceLength = 30;
+
 export const spotifyService = {
   /**
    * format spotify data for current song
    * @param { * } song - current song data
    */
   formatCurrentSong: (song: any): any => {
-    const { progress_ms: progress, item } = song;
-    const {
-      duration_ms: duration,
-      album,
+    const { progress_ms, item } = song;
+    const { album, duration_ms, name, preview_url } = item;
+    const { artists, images } = album;
+    return new Song({
+      progress_ms,
+      duration_ms,
+      artist: artists[0].name,
       name,
-      preview_url: previewUrl,
-    } = item;
-    return [
-      {
-        progress,
-        duration,
-        artist: album.artists[0].name,
-        name,
-        images: [album.images[0]['url']] ?? [],
-        previewUrl,
-      },
-    ];
+      preview_url: preview_url.substr(previewUrlStringReduceLength) ?? '',
+      images: [images[0]['url'].substr(imageUrlStringReduceLength)] ?? [],
+    });
   },
 
   /**
    * format songs
    * @param { * } songs - recently played song data array
    */
-  formatRecentlyPlayed: (songs: any): any => {
-    return songs.map((song) => {
-      const { track, played_at: playedAt } = song;
-      const { artists, name, album, preview_url: previewUrl } = track;
-      return {
-        artist: artists[0].name,
+  formatRecentlyPlayed: (songs: any[]): any => {
+    return songs.map((song: any) => {
+      const { track, played_at } = song;
+      const { artists, name, album, preview_url } = track;
+
+      return new Song({
+        artist: artists[0]?.name ?? '',
         name,
-        playedAt,
-        previewUrl,
-        images: [album.images[0]['url']] ?? [],
-      };
+        played_at,
+        preview_url: preview_url.substr(previewUrlStringReduceLength) ?? '',
+        images:
+          [album.images[0]['url'].substr(imageUrlStringReduceLength)] ?? [],
+      });
     });
   },
 };
