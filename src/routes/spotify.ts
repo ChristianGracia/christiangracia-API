@@ -23,11 +23,16 @@ router.get('/currently-playing', async (req: Request, res: Response) => {
   const response = await spotify.getCurrentlyPlaying();
   res
     .status(response.status)
-    .send(response.data ? spotifyService.formatCurrentSong(response.data) : []);
+    .send(
+      response.data ? [spotifyService.formatCurrentSong(response.data)] : [],
+    );
 });
 
 router.get('/recently-played', async (req: Request, res: Response) => {
-  const response = await spotify.getRecentlyPlayed();
+  const { query } = req;
+  const response = await spotify.getRecentlyPlayed(
+    query?.amount ? Number(query.amount) : 50,
+  );
   res
     .status(response.status)
     .send(
