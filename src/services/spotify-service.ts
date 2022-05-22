@@ -18,7 +18,9 @@ export const spotifyService = {
       artist: artists[0].name,
       name,
       preview_url: preview_url.substr(previewUrlStringReduceLength) ?? '',
-      images: [images[0]['url'].substr(imageUrlStringReduceLength)] ?? [],
+      images:
+        [images[images.length - 1]['url'].substr(imageUrlStringReduceLength)] ??
+        [],
     });
   },
 

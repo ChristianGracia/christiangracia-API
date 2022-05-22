@@ -59,7 +59,7 @@
     "http-errors": "^1.8.1",
     "inline-css": "^3.0.0",
     "morgan": "^1.10.0",
-    "puppeteer": "^10.4.0",
+    "puppeteer": "14.0.0",
     "querystring": "^0.2.1",
     "throng": "^5.0.0",
     "ts-mailgun": "^0.4.3",
