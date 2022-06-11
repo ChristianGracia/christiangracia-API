@@ -1,16 +1,13 @@
 import { Commit } from '../classes/commit';
 import { repo, Repo } from '../classes/repo';
+import { utilService } from './util-service';
 
 export const githubService = {
   /**
-   * Sort repos github repos by first update time and then unique language used
-   * @param { * } sortRepos - repos to be sorted
+   * Sort repos github repos by importance + coolness
+   * @param { * } repos - repos to be sorted
    */
-  sortRepos: (repos: any[]): any[] => {
-    const sortedRepos = repos.sort(function (a, b) {
-      return a.updatedAt > b.updatedAt ? -1 : 1;
-    });
-
+  sortReposByImportance: (repos: any[]): any[] => {
     const comp = {};
 
     const uniqueLanguageRepos = [];
@@ -28,7 +25,7 @@ export const githubService = {
     ];
     const importantLanguages = ['C', 'C#', 'Python', 'Java', 'Kotlin'];
 
-    for (const repo of sortedRepos) {
+    for (const repo of repos) {
       const { language, name } = repo;
       if (starRepoNames.includes(name)) {
         comp[language] = language;
@@ -66,10 +63,15 @@ export const githubService = {
    * @param { repo } repos - repos received from github API
    */
   formatRepos: function (repos: repo[]): Repo[] {
-    return this.sortRepos(
-      repos.map((repo: repo) => {
-        return new Repo(repo);
-      }),
+    return this.sortReposByImportance(
+      repos
+        .sort((a: repo, b: repo) => (a.updated_at > b.updated_at ? -1 : 1))
+        .map((repo: repo) => {
+          return new Repo({
+            ...repo,
+            updated_at: utilService.formatDateAndTime(repo.updated_at),
+          });
+        }),
     );
   },
   /**
@@ -81,7 +83,7 @@ export const githubService = {
       const { commit, html_url } = commitData;
 
       return new Commit({
-        author: commit.author.date,
+        author: utilService.formatDateAndTime(commit.author.date),
         message: commit.message,
         html_url,
       });

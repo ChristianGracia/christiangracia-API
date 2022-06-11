@@ -92,4 +92,34 @@ export const utilService = {
     }
     return { status: 400, data: 'Error creating html' };
   },
+  /**
+   * Creates HH:MM AM/PM date string
+   * @param { Date } date - Date Obj
+   */
+  militaryTimeConverter: (date: Date) => {
+    let hours = date.getHours();
+    const AmOrPm = hours >= 12 ? 'PM' : 'AM';
+
+    hours = hours % 12 || 12;
+    let minutes = date.getMinutes();
+    let formattedMinutes = minutes < 10 ? '0' + minutes : minutes;
+
+    return hours + ':' + formattedMinutes + ' ' + AmOrPm;
+  },
+  /**
+   * Creates HH::MM AM/PM MM/DD/YYYY from a string
+   * @param { Date } string - Date in string
+   */
+  formatDateAndTime: function (date: string) {
+    let formattedDate = new Date(date);
+    return (
+      this.militaryTimeConverter(formattedDate) +
+      ' ' +
+      formattedDate.toLocaleDateString('en-US')
+    );
+  },
+
+  formatHHMMString: (timestamp: number) => {
+    return new Date(timestamp * 1000).toTimeString().split(' ')[0].substring(3);
+  },
 };

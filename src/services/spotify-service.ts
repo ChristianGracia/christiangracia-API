@@ -1,5 +1,5 @@
 import { Song } from '../classes/song';
-
+import { utilService } from './util-service';
 const imageUrlStringReduceLength = 24;
 const previewUrlStringReduceLength = 30;
 
@@ -36,7 +36,7 @@ export const spotifyService = {
       return new Song({
         artist: artists[0]?.name ?? '',
         name,
-        played_at,
+        played_at: utilService.formatDateAndTime(played_at),
         preview_url: preview_url.substr(previewUrlStringReduceLength) ?? '',
         images:
           [album.images[0]['url'].substr(imageUrlStringReduceLength)] ?? [],
