@@ -13,8 +13,10 @@ export const spotifyService = {
     const { album, duration_ms, name, preview_url } = item;
     const { artists, images } = album;
     return new Song({
-      progress_ms,
-      duration_ms,
+      progress_ms: progress_ms / 1000,
+      duration_ms: duration_ms / 1000,
+      progress_time_string: utilService.formatHHMMString(progress_ms),
+      duration_time_string: utilService.formatHHMMString(duration_ms),
       artist: artists[0].name,
       name,
       preview_url: preview_url.substr(previewUrlStringReduceLength) ?? '',
@@ -34,6 +36,10 @@ export const spotifyService = {
       const { artists, name, album, preview_url } = track;
 
       return new Song({
+        progress_ms: 0,
+        duration_ms: 30,
+        progress_time_string: '00:00',
+        duration_time_string: '30:00',
         artist: artists[0]?.name ?? '',
         name,
         played_at: utilService.formatDateAndTime(played_at),
