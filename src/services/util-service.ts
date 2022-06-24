@@ -120,6 +120,6 @@ export const utilService = {
   },
 
   formatHHMMString: (timestamp: number) => {
-    return new Date(timestamp * 1000).toTimeString().split(' ')[0].substring(3);
+    return new Date(timestamp).toTimeString().split(' ')[0].substring(3);
   },
 };

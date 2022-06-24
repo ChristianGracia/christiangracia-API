@@ -39,7 +39,7 @@ export const spotifyService = {
         progress_ms: 0,
         duration_ms: 30,
         progress_time_string: '00:00',
-        duration_time_string: '30:00',
+        duration_time_string: '00:30',
         artist: artists[0]?.name ?? '',
         name,
         played_at: utilService.formatDateAndTime(played_at),
