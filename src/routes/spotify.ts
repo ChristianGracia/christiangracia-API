@@ -1,6 +1,7 @@
 import express, { Request, Response } from 'express';
 import { spotifyService } from '../services/spotify-service';
 import { Spotify } from '../classes/spotify';
+import { Test } from '../classes/test';
 
 const router = express.Router();
 const env = process.env.NODE_ENV === 'production';
