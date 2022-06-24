@@ -320,14 +320,14 @@ export class Spotify {
       },
     });
   };
-  getRecentlyPlayed = async () => {
+  getRecentlyPlayed = async (amount: number = 50) => {
     if (this.access_token === '') {
       console.log('server started, no token found');
       await this.handleTokenError();
     }
 
     return await axios({
-      url: Constants.SPOTIFY_RECENTLY_PLAYED,
+      url: Constants.SPOTIFY_RECENTLY_PLAYED + amount,
       method: 'get',
       headers: {
         Authorization: 'Bearer ' + this.access_token,

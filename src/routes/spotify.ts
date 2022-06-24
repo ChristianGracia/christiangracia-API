@@ -4,12 +4,14 @@ import { Spotify } from '../classes/spotify';
 import { Test } from '../classes/test';
 
 const router = express.Router();
-
+const env = process.env.NODE_ENV === 'production';
 const client_id = process.env.SPOTIFY_CLIENT_ID;
 const client_secret = process.env.SPOTIFY_CLIENT_SECRET;
 const client_user = process.env.SPOTIFY_CLIENT_USER;
 const client_password = process.env.SPOTIFY_CLIENT_PASSWORD;
-const redirect_uri = process.env.SPOTIFY_REDIRECT_URL;
+const redirect_uri = env
+  ? process.env.SPOTIFY_REDIRECT_URL
+  : process.env.SPOTIFY_REDIRECT_URL_LOCAL;
 
 const spotify = new Spotify(
   client_id,
@@ -23,11 +25,16 @@ router.get('/currently-playing', async (req: Request, res: Response) => {
   const response = await spotify.getCurrentlyPlaying();
   res
     .status(response.status)
-    .send(response.data ? spotifyService.formatCurrentSong(response.data) : []);
+    .send(
+      response.data ? [spotifyService.formatCurrentSong(response.data)] : [],
+    );
 });
 
 router.get('/recently-played', async (req: Request, res: Response) => {
-  const response = await spotify.getRecentlyPlayed();
+  const { query } = req;
+  const response = await spotify.getRecentlyPlayed(
+    query?.amount ? Number(query.amount) : 50,
+  );
   res
     .status(response.status)
     .send(

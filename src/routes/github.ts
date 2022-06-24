@@ -1,4 +1,5 @@
 import express, { Request, Response } from 'express';
+import { Puppeteer } from '../classes/puppeteer';
 const router = express.Router();
 const axios = require('axios');
 import { githubService } from '../services/github-service';
@@ -28,6 +29,17 @@ router.get('/repo-all-commits', async (req: Request, res: Response) => {
   } else {
     res.status(response.status).json(response);
   }
+});
+
+router.get('/render-commit', async (req: Request, res: Response) => {
+  const puppeter = new Puppeteer();
+
+  const response = await puppeter.getGithub();
+  res.writeHead(200, {
+    'Content-Type': 'image/png',
+    // 'Content-Length': response,
+  });
+  res.end(response);
 });
 
 module.exports = router;
