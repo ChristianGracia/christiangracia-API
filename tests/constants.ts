@@ -22,4 +22,5 @@ export const Constants = {
       baseUrl: '/util',
     },
   ],
+  song: {},
 };

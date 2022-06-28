@@ -2,6 +2,7 @@ import express, { Request, Response } from 'express';
 import { spotifyService } from '../services/spotify-service';
 import { Spotify } from '../classes/spotify';
 import { Test } from '../classes/test';
+import { utilService } from '../services/util-service';
 
 const router = express.Router();
 
@@ -53,5 +54,14 @@ router.get('/recently-played', async (req: Request, res: Response) => {
         ? spotifyService.formatRecentlyPlayed(response.data.items)
         : [],
     );
+});
+
+router.get('/image', async (req: Request, res: Response) => {
+  res.writeHead(200, { 'Content-Type': 'text/html' });
+  res.end(
+    `<!DOCTYPE html><html><body><div>${await utilService.compressImage(
+      '',
+    )}</div></body></html>`,
+  );
 });
 module.exports = router;
