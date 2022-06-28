@@ -4,6 +4,8 @@ import typescript from 'highlight.js/lib/languages/typescript';
 hljs.registerLanguage('typescript', typescript);
 import * as fs from 'fs';
 import * as path from 'path';
+const sharp = require('sharp');
+import axios from 'axios';
 
 export const utilService = {
   /**
@@ -121,5 +123,35 @@ export const utilService = {
 
   formatHHMMString: (timestamp: number) => {
     return new Date(timestamp).toTimeString().split(' ')[0].substring(3);
+  },
+
+  compressImage: async (url: string, type = 'image') => {
+    try {
+      const raw = await axios.get(
+        'https://i.scdn.co/image/ab67616d0000b273107ec8cc91c8e076d778a5da',
+        {
+          responseType: 'arraybuffer',
+        },
+      );
+
+      let base64 = Buffer.from(
+        await sharp(raw.data)
+          .resize({ width: 60 })
+          .jpeg({ quality: 20 })
+          .toBuffer(),
+        'binary',
+      ).toString('base64');
+
+      let image = `data:${raw.headers['content-type']};base64,${base64}`;
+      if (type === 'string') {
+        return image;
+      } else {
+        let imgFile = `<img src="${image}"/>`;
+        return imgFile;
+      }
+    } catch (e) {
+      console.log(e);
+      return '';
+    }
   },
 };
